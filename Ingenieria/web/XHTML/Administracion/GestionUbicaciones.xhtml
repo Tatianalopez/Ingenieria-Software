@@ -1,0 +1,300 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Consulta de Ubicacion</title>
+    </h:head> 
+    <h:body>
+        <h:form id="FrmGestionUbi">
+
+            <table>
+                <tr>
+                    <td><big><big><b><p class="Title">Gestión de ubicaciones</p></b></big></big></td>
+                </tr>
+                <tr>
+                    <td colspan="10"> <p:separator /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:panel style="border: none;">
+                            <b><p:outputLabel value="Seleccione la opción a ver y/o modificar " style="font-family:Arial;font-size: 13px;"/></b>
+                            <br/>
+                            <br/>
+                            <p:selectOneRadio id="RBTubi" value="#{MBUbicacion.estadoRadioSeleccion}" style="font-family:Arial;font-size: 12px;">
+                                <f:selectItem itemLabel="Gestión de departamentos" itemValue="Departamentos" />
+                                <f:selectItem itemLabel="Gestion de ciudades" itemValue="Ciudades" />
+                                <f:selectItem itemLabel="Gestion de pisos" itemValue="Pisos" />
+                                <p:ajax event="change" listener="#{MBUbicacion.visiblePanel()}"
+                                        update=":contenedorGeneral:Contenedor:FrmGestionUbi:InfCiudad,
+                                        :contenedorGeneral:Contenedor:FrmGestionUbi:InfDepto,
+                                        :contenedorGeneral:Contenedor:FrmGestionUbi:InfPisos"/>
+                            </p:selectOneRadio>
+                        </p:panel>
+                    </td> 
+                </tr>
+                <tr>
+                    <td>
+                        <!-- Informacion para todos los departamentos -->
+                        <p:outputPanel id="InfDepto">
+                            <p:panel style="font-size: 12px;border: none;" rendered="#{MBUbicacion.estDepto}">
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                               
+                                        <td>
+                                            <p:commandButton value="Crear nuevo departamento" icon="ui-icon-arrowthick-1-e" 
+                                                             update=":contenedorGeneral:Contenedor:FrmGestionUbi:DialogDepartamento" action="#{MBUbicacion.abrirDialogRegistro(1)}" style="font-family: Arial;font-size: 13px;" />       
+                                            <p:spacer width="10"/>
+                                            <p:commandButton update=":contenedorGeneral:Contenedor:FrmGestionUbi:DialogDepartamento,:contenedorGeneral:Contenedor:growl_General"
+                                                             style="font-family: Arial;font-size: 13px;"  icon="ui-icon-check" value="Modificar" action="#{MBUbicacion.validarDatatable(1)}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBUbicacion.listDepto)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                            <p:dataTable var="Depto" value="#{MBUbicacion.listDepto}" selectionMode="single" id="DeptoTable" rowKey="#{Depto.idDep}" 
+                                                         selection="#{MBUbicacion.ubiDepto}"  widgetVar="Departamento" >
+
+                                                <p:column headerText="Nombre del departamento" filterBy="#{Depto.nomDep}" style="font-family:Arial;font-size: 12px;width: 250px;" filterMatchMode="contains">
+                                                    <h:outputText value="#{Depto.nomDep}"/>
+                                                </p:column>                        
+                                            </p:dataTable>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <br/>
+                            </p:panel>
+                        </p:outputPanel>
+
+                        <!-- Informacion para todos las ciudades -->
+                        <p:outputPanel id="InfCiudad">
+                            <p:panel style="font-size: 12px;border: none;" rendered="#{MBUbicacion.estCiu}">
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                               
+                                        <td>
+                                            <p:commandButton value="Crear nueva ciudad" icon="ui-icon-arrowthick-1-e" 
+                                                             update=":contenedorGeneral:Contenedor:FrmGestionUbi:DialogCiudad" action="#{MBUbicacion.abrirDialogRegistro(2)}"  style="font-family: Arial;font-size: 13px;" />            
+                                            <p:spacer width="10"/>
+                                            <p:commandButton  style="font-family: Arial;font-size: 13px;" update=":contenedorGeneral:Contenedor:FrmGestionUbi:DialogCiudad,
+                                                              :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-check" 
+                                                              value="Modificar" action="#{MBUbicacion.validarDatatable(2)}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBUbicacion.listCiudad)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+
+                                            <p:dataTable var="Ciu" value="#{MBUbicacion.listCiudad}" selectionMode="single" id="CiudadTable" rowKey="#{Ciu.idCiu}" 
+                                                         selection="#{MBUbicacion.ubiCiudad}"  widgetVar="Ciudad" >
+
+                                                <p:column headerText="Nombre de la ciudad" filterBy="#{Ciu.nomCiu}" style="font-family:Arial;font-size: 12px;" filterMatchMode="contains">
+                                                    <h:outputText value="#{Ciu.nomCiu}" />
+                                                </p:column>
+                                                <p:column headerText="Departamento" filterBy="#{Ciu.nomDep}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{Ciu.nomDep}" />
+                                                </p:column>                    
+                                            </p:dataTable>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <br/>
+                            </p:panel>
+                        </p:outputPanel>
+
+                        <!-- Informacion para los pisos -->
+                        <p:outputPanel id="InfPisos">
+                            <p:panel style="font-size: 12px;border: none;" rendered="#{MBUbicacion.estPisos}">
+                                <table cellspacing="4" cellpadding="4" border="0">
+                                    <tr>                            
+                                        <td>
+                                            <p:commandButton value="Crear nueva ubicación"  icon="ui-icon-arrowthick-1-e" 
+                                                             update=":contenedorGeneral:Contenedor:FrmGestionUbi:DialogPisos" action="#{MBUbicacion.abrirDialogRegistro(3)}" style="font-family: Arial;font-size: 13px;" />
+                                            <p:spacer width="10"/>
+                                            <p:commandButton style="font-family: Arial;font-size: 13px;"
+                                                             update=":contenedorGeneral:Contenedor:FrmGestionUbi:DialogPisos,
+                                                             :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-check" value="Modificar" action="#{MBUbicacion.validarDatatable(3)}"/>
+
+                                        </td> 
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBUbicacion.listPisos)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>                                            
+                                            <p:dataTable var="Piso" value="#{MBUbicacion.listPisos}" selectionMode="single"  id="PisoTable"
+                                                         rowKey="#{Piso.idPiso}" selection="#{MBUbicacion.ubiPiso}"  widgetVar="UbicacionPisos" >
+
+                                                <p:column headerText="Nombre de ubicación" filterBy="#{Piso.nomPiso}" style="font-family:Arial;font-size: 12px;width: 250px;">
+                                                    <h:outputText value="#{Piso.nomPiso}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                            <br/>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <br/>
+                            </p:panel>
+                        </p:outputPanel>
+                    </td>
+                </tr>
+            </table>
+
+            <!--Crear / Modificar Nuevo departamento -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogDepartamento">
+                <p:dialog header="#{MBUbicacion.tituloDialogDepto}" widgetVar="DlgDepto"  height="auto" width="500" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Nombre departamento: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td><p:inputText id="txt_nombre_depto" value="#{MBUbicacion.nomDep}" pt:placeholder="Nombre"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;"  onkeypress="return validarLetras(event)"/></td>
+                            </tr>                            
+                        </table>
+                        <br/>
+
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBUbicacion.tituloDialogDepto == 'Registrar nuevo departamento'}">
+                                        <td><p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBUbicacion.regisDepto()}"  style="font-family: Arial;font-size: 13px;"  id="BtnRegistroDepto" 
+                                                              update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:FrmGestionUbi:InfDepto"/> </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><p:commandButton icon="ui-icon-disk" action="#{MBUbicacion.modifiDepto()}"  style="font-family: Arial;font-size: 13px;" value="Modificar" 
+                                                             update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:FrmGestionUbi:InfDepto" /> </td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>
+
+
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+            <!--Crear / Modificar Nueva Cuidad -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogCiudad">
+                <p:dialog header="#{MBUbicacion.tituloDialogCiudad}" widgetVar="DlgCiudad" height="auto" width="500" showEffect="fade" hideEffect="fade">
+
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3"  style="font-family: Arial;font-size: 12px;">
+                            <tr>
+                                <td colspan="2"> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td> <p:outputLabel value="Departamento: *"    /></td>
+                                <td><p:selectOneMenu  id="Depto" style="width: 213px;font-size: 13px;" effect="fade" value="#{MBUbicacion.fkCodDepto}" filter="true" filterMatchMode="contains">
+                                        <f:selectItem  itemValue="" itemLabel="--Seleccione--" />
+                                        <f:selectItems  value="#{MBUbicacion.cargaDep}" />
+                                    </p:selectOneMenu> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel value="Nombre: *" /></td>
+                                <td><p:inputText id="txt_nombre_ciudad" value="#{MBUbicacion.nomCiu}" pt:placeholder="Nombre"  style="width: 213px;text-transform: uppercase;" onkeypress="return validarLetras(event)" /></td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel value="Exento de iva:" /></td>
+                                <td><p:selectBooleanCheckbox value="#{MBUbicacion.exentos}" /></td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBUbicacion.tituloDialogCiudad == 'Registrar nueva ciudad'}">                                        
+                                        <td><p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBUbicacion.regisCiudad()}" 
+                                                              style="font-family: Arial;font-size: 13px;"  id="BtnRegistroCiudad" 
+                                                              update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:FrmGestionUbi:InfCiudad"/></td>
+
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><p:commandButton  icon="ui-icon-disk" value="Modificar" action="#{MBUbicacion.modifiCiudad()}" 
+                                                              style="font-family: Arial;font-size: 13px;" 
+                                                              update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:FrmGestionUbi:InfCiudad"/></td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>
+
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>        
+
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogPisos">
+                <p:dialog header="#{MBUbicacion.tituloDialogPiso}" widgetVar="DlgUbica"  height="auto" width="500" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Nombre ubicación: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td><p:inputText id="txt_nombre_Piso" value="#{MBUbicacion.nomPiso}" pt:placeholder="Piso"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;"  onkeypress="return validarLetrasyNumeros(event)"/></td>
+                            </tr>                          
+                        </table>
+                        <br/>                     
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBUbicacion.tituloDialogPiso=='Registrar nueva ubicación'}" >
+                                        <td> <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBUbicacion.regisPisos()}" id="BtnRegistroPisos"  style="font-family: Arial;font-size: 13px;" 
+                                                               update=":contenedorGeneral:Contenedor:FrmGestionUbi:InfPisos,                                                             
+                                                               :contenedorGeneral:Contenedor:growl_General"/></td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><p:commandButton icon="ui-icon-disk" action="#{MBUbicacion.modifiPiso()}" value="Modificar" 
+                                                             update=":contenedorGeneral:Contenedor:growl_General,
+                                                             :contenedorGeneral:Contenedor:FrmGestionUbi:InfPisos"  style="font-family: Arial;font-size: 13px;"/> </td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>  
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>
+

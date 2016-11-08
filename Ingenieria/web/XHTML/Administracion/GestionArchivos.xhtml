@@ -1,0 +1,180 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>GestionArchivos</title>
+    </h:head>
+    <h:body> 
+        <h:form id="FRMGestArc">       
+            <p:outputPanel id="InfArchivo">
+                <p:panel style="font-size: 12px;border: none;" >
+                    <table cellspacing="4" cellpadding="4">
+                        <tr> 
+                            <td>
+                                <big><big><b><p class="Title">Gestion de archivos</p></b></big></big>            
+                            </td>
+                            <td>
+                                <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                            </td>
+                            <td>
+                                <p:commandButton value="Crear nuevo archivo" 
+                                                 update=":contenedorGeneral:Contenedor:FRMGestArc:DialogArchivos" 
+                                                 action="#{MBAdministacion.abrirInfodialogRegistro(9)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />
+                            </td>
+                        </tr>                       
+                    </table>
+                    <table>
+                        <tr>
+                            <td colspan="10">
+                                <p:separator   />      
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br/>
+                                <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listArchivos)}" style="font-family: Arial;font-size: 13px;" /></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>                                
+                                <p:dataTable var="Admi" value="#{MBAdministacion.listArchivos}"  id="ArchivoTable" selection="#{MBAdministacion.admArchivos}"  
+                                             rowKey="#{Admi.codParametro}" selectionMode="single" sortBy="#{Admi.codParametro}"   widgetVar="Archivo" 
+                                             >                         
+                                    <p:column headerText="Proceso asociado" filterBy="#{Admi.argumentoParametro}" style="font-family:Arial;font-size: 12px;">
+                                        <h:outputText value="#{Admi.argumentoParametro.toUpperCase()}"/>
+                                    </p:column>
+                                    <p:column headerText="Nombre del archivo" filterBy="#{Admi.resultadoParametro}" style="font-family:Arial;font-size: 12px;">
+                                        <h:outputText value="#{Admi.resultadoParametro}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+                                <br/>
+                                <center>
+                                    <p:commandButton style="font-family: Arial;font-size: 13px;"
+                                                     icon="ui-icon-check" value="Modificar"   action="#{MBAdministacion.abrirInfodialog(9)}" 
+                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                     :contenedorGeneral:Contenedor:FRMGestArc:DialogArchivos"/>
+                                </center>
+                                <br/>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </p:panel>
+            </p:outputPanel>
+
+
+            <!--DIALOGS DE INFORMACION -->
+            <!-- Para Crear un nuevo Archivo  -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogArchivos">
+                <p:dialog header="#{MBAdministacion.tituloDialogArchivos}" widgetVar="DlgArchivo"  height="auto" width="500" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <c:choose>
+                                <c:when test="#{MBAdministacion.tituloDialogArchivos =='Registrar nuevo archivo'}">
+
+                                    <tr>
+                                        <td><p:outputLabel for= "OpcionArc" value="Opción de archivo: *" style="font-family: Arial;font-size: 12px;"/></td>
+                                        <td><p:selectOneRadio id="OpcionArc" value="#{MBAdministacion.opcionArchivo}" style="font-family: Arial;font-size: 12px;">
+                                                <f:selectItem itemLabel="Archivos de avaluos" itemValue="1"  />
+                                                <f:selectItem itemLabel="Archivos de clientes" itemValue="2" />
+                                                <p:ajax event="change" id="ajaxCliente" update=":contenedorGeneral:Contenedor:FRMGestArc:Uno" listener="#{MBAdministacion.cargaOpcionGestionArchivos()}" />
+                                            </p:selectOneRadio></td>
+                                    </tr>
+
+                                </c:when>
+                            </c:choose>
+                        </table>                      
+
+                        <p:outputPanel id="Uno">
+                            <table cellspacing="3" cellpadding="3">
+                                <tr>
+
+                                    <td><p:outputLabel for= "TipAva" value="Tipo de avaluo:* " rendered="#{MBAdministacion.opcionAvaluo}" style="font-family: Arial;font-size: 12px;"/></td>
+                                    <td><p:selectOneMenu id="TipAva" value="#{MBAdministacion.nombreTipAvaluo}"  rendered="#{MBAdministacion.opcionAvaluo}" panelStyle="font-family:Arial;font-size: 12px;width: 180px;;" style="font-family:Arial;font-size: 12px;width: 180px;">
+                                            <f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+                                            <f:selectItem itemLabel="PREDIO" itemValue="Pre"/>
+                                            <f:selectItem itemLabel="MAQUINARIA" itemValue="Maq"/>
+                                            <f:selectItem itemLabel="MUEBLE / ENSER" itemValue="Ens"/>
+                                        </p:selectOneMenu></td>
+
+                                </tr>
+                            </table>
+                        </p:outputPanel>
+
+                        <table cellspacing="3" cellpadding="3">
+
+                            <tr>
+                                <td><p:outputLabel for= "Proceso" value="Proceso asociado:* " style="font-family: Arial;font-size: 12px;"/></td>
+                                <td><p:selectOneMenu id="Proceso" value="#{MBAdministacion.nombre_Proceso}" panelStyle="font-family:Arial;font-size: 12px;width: 180px;" style="font-family:Arial;font-size: 12px;width: 180px;">
+                                        <f:selectItem itemLabel="--Seleccione--" itemValue=""/>
+                                        <f:selectItem itemLabel="SOLICITUD" itemValue="Sol"/>
+                                        <f:selectItem itemLabel="INFORME" itemValue="Inf"/>
+                                    </p:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel  value="Nombre del archivo:* " style="font-family: Arial;font-size: 12px;"/></td>
+
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.resultadoParametro == 'Anticipo'}">
+                                        <td><p:outputLabel id="NomArc1" value="#{MBAdministacion.resultadoParametro}" style="font-family:Arial;font-size: 12px;width: 200px;"/></td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><p:inputText id="NomArc1" value="#{MBAdministacion.resultadoParametro}" pt:placeholder="Nombre.."  style="font-family:Arial;font-size: 12px;width: 200px;text-transform: uppercase;"  onkeypress="return validarLetrasyNumeros(event)"/></td>
+                                    </c:otherwise>
+                                </c:choose>
+
+                            </tr>
+                        </table>
+
+                        <br/>
+
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogArchivos =='Registrar nuevo archivo'}">
+
+                                        <td>
+                                            <p:commandButton value="Registrar archivo" id="BTNInserArc" style="font-family: Arial;font-size: 12px;" 
+                                                             action="#{MBAdministacion.inserArchivoProceso()}" 
+                                                             update=":contenedorGeneral:Contenedor:growl_General,
+                                                             :contenedorGeneral:Contenedor:FRMGestArc:ArchivoTable"  icon="ui-icon-disk"/>
+                                        </td>
+
+                                    </c:when>
+                                    <c:otherwise>
+
+                                        <td>    
+                                            <p:commandButton value="Actualizar Registro" id="BTNModifArc" style="font-family: Arial;font-size: 12px;" 
+                                                             action="#{MBAdministacion.modfiArchivoProceso()}" 
+                                                             update=":contenedorGeneral:Contenedor:growl_General,
+                                                             :contenedorGeneral:Contenedor:FRMGestArc:ArchivoTable"  icon="ui-icon-disk"/>
+                                        </td>
+
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>
+

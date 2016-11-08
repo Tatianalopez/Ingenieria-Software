@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"     
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head> 
+        <title>Consulta de Enviar A</title>
+    </h:head>
+    <h:body>
+        <h:form id="FrmEnvio">
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión para el envio de avaluos</p></b></big></big>                        
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear punto de envio" update=":contenedorGeneral:Contenedor:FrmEnvio:DialogEnvioAvaluo" action="#{MBAdministacion.abrirInfodialogRegistro(8)}" 
+                                         icon="ui-icon-arrowthick-1-e" style="font-family: Arial;font-size: 13px;" />
+                    </td> 
+                </tr>
+            </table>
+            <br/>
+
+            <p:outputPanel id="DatosEnvio">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listEnvio)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="Envio" value="#{MBAdministacion.listEnvio}" selectionMode="single" id="EnvioTable" rowKey="#{Envio.codigoParametro}" 
+                                         selection="#{MBAdministacion.admEnvio}"  widgetVar="EnviarA" >
+
+                                <p:column headerText="Nombre del punto de envio" filterBy="#{Envio.nombreParametro}" style="font-family:Arial;font-size: 12px;width: 250px;">
+                                    <h:outputText value="#{Envio.nombreParametro}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;"
+                                      update=":contenedorGeneral:Contenedor:FrmEnvio:DialogEnvioAvaluo,
+                                      :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-check" value="Modificar" action="#{MBAdministacion.abrirInfodialog(8)}"/>
+                </center>
+                <br/>
+            </p:outputPanel>
+
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogEnvioAvaluo">
+                <p:dialog header="#{MBAdministacion.tituloDialogEnvio}" widgetVar="DlgEnvio"  height="auto" width="500" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table>
+                            <tr>
+                                <td><h:outputText value="Nombre del punto de envio: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>  <p:inputText id="txt_nombre_Envio" value="#{MBAdministacion.nombreParametro}" pt:placeholder="Envio"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;" 
+                                                   onkeypress="return validarLetrasyNumeros(event)"/></td>
+                            </tr>                            
+                        </table>
+                        <br/>
+
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogEnvio == 'Registrar nuevo lugar para envio del avaluo'}">
+                                        <td>
+                                            <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBAdministacion.regisEnvio()}" style="font-family: Arial;font-size: 13px;"
+                                                              update=":contenedorGeneral:Contenedor:FrmEnvio:DatosEnvio,
+                                                              :contenedorGeneral:Contenedor:growl_General"/>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiEnvio()}" value="Modificar" style="font-family: Arial;font-size: 13px;"
+                                                             update=":contenedorGeneral:Contenedor:growl_General,
+                                                             :contenedorGeneral:Contenedor:FrmEnvio:DatosEnvio" />
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+
+                            </tr>
+                        </table>
+
+                        <h:panelGrid columns="1" cellpadding="5" >
+
+                        </h:panelGrid>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+        </h:form>
+    </h:body>
+</html>
+

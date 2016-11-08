@@ -1,0 +1,117 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Gestion de Cargos</title>
+    </h:head>
+    <h:body> 
+        <h:form id="FRMGesCargo">
+            <br/>
+            <table cellspacing="4" cellpadding="4" >
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión de cargos</p></b></big></big>                                
+                    </td>                    
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear un nuevo cargo" update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:FRMGesCargo:DialogCargo" action="#{MBAdministacion.abrirInfodialogRegistro(3)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e"/>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+
+            <p:outputPanel id="DatosCargo">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                             <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listCargos)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="Carg" value="#{MBAdministacion.listCargos}"  rows="50" id="CargoTable" style="font-family: Arial;font-size: 12px;" 
+                                         selectionMode="single" widgetVar="Cargos" selection="#{MBAdministacion.admCargos}" rowKey="#{Carg.codCargo}" 
+                                         emptyMessage="No se encontraron registros">
+
+                                <p:column headerText="Nombre"  filterBy="#{Carg.nombreCargo}" style="font-family:Arial;font-size: 12px;">
+                                    <h:outputText value="#{Carg.nombreCargo}" />
+                                </p:column>
+                                <p:column headerText="Descripción"  filterBy="#{Carg.descripcionCargo}" style="font-family:Arial;font-size: 12px;">
+                                    <h:outputText value="#{Carg.descripcionCargo}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton value="Modificar" action="#{MBAdministacion.abrirInfodialog(3)}" icon="ui-icon-check" 
+                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:FRMGesCargo:DialogCargo"  style="font-family: Arial;font-size: 13px;" />  
+                </center>
+                <br/>
+            </p:outputPanel>
+
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogCargo">
+                <p:dialog header="#{MBAdministacion.tituloDialogCargo}" widgetVar="DlgCargo" modal="false" height="auto" width="500" showEffect="fade" hideEffect="fade">
+
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Nombre: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>  <p:inputText id="CargNom" value="#{MBAdministacion.nombreTable}" pt:placeholder="Nombre" style="font-family: Arial;font-size: 12px;text-transform: uppercase;width: 250px;" 
+                                                   onkeypress="return validarLetrasyNumeros(event)"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Descripción: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td><p:inputTextarea id="CargDes" value="#{MBAdministacion.desTable}" pt:placeholder="Descripción"  autoResize="true"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;width: 250px;" /></td>
+                            </tr>
+                        </table>                        
+
+                        <table border="0">
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogCargo =='Registrar nuevo cargo' }">
+                                        <td>
+                                            <center><p:commandButton  icon="ui-icon-check" action="#{MBAdministacion.regisCargo()}" value="Guardar" 
+                                                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                                                      :contenedorGeneral:Contenedor:FRMGesCargo:DatosCargo" id="BTN1"
+                                                                      style="font-family: Arial;font-size: 13px;" /> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-check" action="#{MBAdministacion.modifiCargo()}" value="Modificar"  style="font-family: Arial;font-size: 13px;"
+                                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     :contenedorGeneral:Contenedor:FRMGesCargo:DatosCargo" /> </center>
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>
+
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+           
+        </h:form>
+    </h:body>
+</html>

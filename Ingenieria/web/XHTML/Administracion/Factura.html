@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<html>
+    <head>
+        <title>Factura de venta</title>
+        
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body >
+    <center>
+        <div style="border: #87BAE1;width: 70%;">
+            <h1>Factura de venta</h1>
+            <hr/>
+            <table border="0" cellspacing="3" cellpadding="3" style="float: right;">
+                <tr>
+                    <td><b>N° de factura</b></td>
+                    <td>Aca numero de factura</td>
+                </tr>
+
+            </table>
+            <br/>
+            <br/>
+            <br/>          
+            <table border="0" cellspacing="3" cellpadding="3" >
+                <tr>
+                    <td><b>Cliente</b></td>
+                    <td>
+                        <select name="cmbClientes">
+                            <option>Jhojan Stiven Rodriguez</option>
+                            <option>Claudia Marcela Mesa</option>
+                        </select>
+                    </td>
+                    <td><b>Descuento</b></td>
+                    <td>
+                        <input type="text" name="txtDescuentoCliente" value="" size="10" /><b> %</b>                  
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td><b>Fecha de factura</b></td>
+                    <td>
+                        Aca fecha actual
+                    </td>
+                    <td><b>Fecha de vencimiento</b></td>
+                    <td>
+                        Aca fecha de vencimiento              
+                    </td>
+
+                </tr>     
+                
+                <tr>
+                    <td><b>Formas de pago</b></td>
+                    <td>
+                        <select name="cmbFormasPago">
+                            <option>Efectivo</option>
+                            <option>Credito</option>
+                            <option>Cheque</option>
+                            <option>PSE</option>
+                        </select>
+                    </td>
+                </tr>
+ 
+            </table>
+
+            <br/>
+            
+            <table border="0" cellspacing="3" cellpadding="3">
+                <tr>
+                    <td><b>Información del cliente</b></td>
+                </tr>
+                <tr>
+                    <td colspan="10"><hr/></td>
+                </tr>
+                <tr>
+                     <td><b>N° de documento<b></td>
+                     <td>Aca n° de documento</td>
+                    <td><b>Nombres</b></td>
+                     <td>Aca nombres de cliente</td>                    
+                </tr>
+                <tr>
+                   <td><b>Dirección</b></td>
+                     <td>Aca direccion de cliente</td>
+                     <td><b>Telefono<b></td>
+                     <td>Aca n° de telefono</td>
+                </tr>
+            </table>
+            <br/>
+            
+            
+              <fieldset>
+            <table border="0" cellspacing="3" cellpadding="3">
+                <tr>
+                    <td><b>Información del productos</b></td>
+                </tr>
+                <tr>
+                    <td colspan="10"><hr/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <table border="0" cellspacing="3" cellpadding="3">
+                            <thead>
+                                <tr>
+                                    <th>Consecutivo</th>
+                                    <th>Producto</th>
+                                    <th>Descripción</th>
+                                    <th>Cantidad</th>
+                                    <th>Vr Unitario</th>
+                                    <th>Vr Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>aca producto</td>
+                                    <td>Aca descripción</td>
+                                    <td>
+                                        <input type="text" name="txtCantidad" style="width: 60px;" />
+                                    </td>
+                                    <td>Aca vr unitario</td>
+                                    <td>Aca vt total</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </td>
+                </tr>
+            </table>
+                    </fieldset>
+
+        </div>
+    </center>
+</body>
+</html>

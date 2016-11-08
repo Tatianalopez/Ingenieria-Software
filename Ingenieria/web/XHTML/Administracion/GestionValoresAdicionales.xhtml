@@ -1,0 +1,144 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Tipo Valores </title>
+    </h:head> 
+    <h:body> 
+        <h:form id="formTipoConcepto">
+            <br/>
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión tipo de valores adicionales</p></b></big></big>
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo Tipo" update=":contenedorGeneral:Contenedor:formTipoConcepto:DialogTipConcepto" 
+                                         action="#{MBAdministacion.abrirInfodialogRegistro(22)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />            
+                    </td>
+                </tr>
+            </table>
+            <p:outputPanel id="DatosTipConcepto">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listTipoConcepto)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="TipConcepto" value="#{MBAdministacion.listTipoConcepto}"
+                                         selectionMode="single" id="TipDocTable" style="font-family: Arial;font-size: 12px;" 
+                                         rowKey="#{TipConcepto.codParametro}" selection="#{MBAdministacion.admTipoFactConcep}"  widgetVar="Tipo_Concepto"
+                                         scrollHeight="50" emptyMessage="No se encontraron registros" >
+                                <p:column headerText="Grupo" style="font-family:Arial;font-size: 12px;width: 50px;" filterBy="#{TipConcepto.campoCondicion}"  >
+                                    <h:outputText value="#{TipConcepto.campoCondicion}"  />
+                                </p:column>
+                                <p:column headerText="Nombre" style="font-family:Arial;font-size: 12px;width: 100px;" filterBy="#{TipConcepto.nombreParametro}" >
+                                    <h:outputText value="#{TipConcepto.nombreParametro}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;"                                      
+                                      icon="ui-icon-check" value="Modificar"   action="#{MBAdministacion.abrirInfodialog(22)}" 
+                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:formTipoConcepto:DialogTipConcepto"  />
+                </center>
+                <br/>
+
+
+            </p:outputPanel>
+
+            <!--DIALOGS DE INFORMACION -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogTipConcepto">
+
+
+                <p:dialog header="#{MBAdministacion.tituloDialogTipConcp}" widgetVar="DlgTipConcepto" modal="false" height="auto" width="400" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table  cellspacing="2" cellpadding="2">
+                            <tr>
+                                <td colspan="2"> <b><center><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></center></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+
+                            <c:choose>
+                                <c:when test="#{MBAdministacion.tituloDialogTipConcp=='Modificar Valor adicional'}">
+                                    <tr>
+                                        <td><p:outputLabel value="N* de registro: "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                        <td><p:outputLabel value="#{MBAdministacion.codConcepto}"  style="font-family: Arial;font-size: 12px;" /></td>
+                                    </tr>
+                                </c:when>
+                            </c:choose>
+                            <c:choose>
+                                <c:when test="#{MBAdministacion.tituloDialogTipConcp!='Modificar Valor adicional'}">
+                                    <tr>
+                                        <td><p:outputLabel value="Valor adicional a:*  "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                        <td>
+                                            <p:selectOneMenu id="SoliPor"  style="width:200px;font-size: 12px;" value="#{MBAdministacion.descripItem}" >
+                                                <f:selectItem itemLabel="--Seleccione--" itemValue="" noSelectionOption="true" />
+                                                <f:selectItem itemLabel="Factura" itemValue="Factura" />
+                                                <f:selectItem itemLabel="Avalúo" itemValue="Avaluo"  />
+                                            </p:selectOneMenu>
+                                        </td>
+                                    </tr>
+                                </c:when>
+                            </c:choose>
+
+                            <tr>
+                                <td><p:outputLabel value="Nombre:*  "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                <td> <p:inputText  value="#{MBAdministacion.nombreConcepto}"  style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" placeholder="Nombre valor adicional" onkeypress="return validarLetrasyNumeros(event)" /></td>
+                            </tr>
+
+                        </table>
+
+                        <br/>
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogTipConcp=='Modificar Valor adicional'}">
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modTipoConceptoFact()}"  
+                                                                     style="font-family: Arial;font-size: 13px;" value="Modificar" 
+                                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     DatosTipConcepto,DialogTipConcepto" /> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <p:commandButton  icon="ui-icon-disk" value="Guardar" style="font-family: Arial;font-size: 13px;" 
+                                                              actionListener="#{MBAdministacion.registTipoFactCncepto('ValorAdicional')}" id="BTN2"
+                                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                                              DatosTipConcepto,DialogTipConcepto" />
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+
+
+                            </tr>
+                        </table>
+                        <br/>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+        </h:form>
+    </h:body>
+</html>

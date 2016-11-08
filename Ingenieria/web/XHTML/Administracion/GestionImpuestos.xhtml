@@ -1,0 +1,122 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Gestion de impuestos</title>
+    </h:head> 
+    <h:body> 
+        <h:form id="FrmImpuestos">
+            <br/>
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión de impuestos</p></b></big></big>        
+
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo impuesto" update=":contenedorGeneral:Contenedor:FrmImpuestos:DialogImpuestos" 
+                                         action="#{MBAdministacion.abrirInfodialogRegistro(19)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />            
+                    </td>
+                </tr>
+            </table>
+            <p:outputPanel id="DatosImpuestos">
+                <table cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listImpuestos)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="Impuesto" value="#{MBAdministacion.listImpuestos}"
+                                         selectionMode="single" id="ImpuestosTable" style="font-family: Arial;font-size: 12px;" 
+                                         rowKey="#{Impuesto.codImpuesto}" selection="#{MBAdministacion.admImpuestos}" widgetVar="Impuestos"
+                                         scrollHeight="50" emptyMessage="No se encontraron registros" >
+
+                                <p:column headerText="Nombre de impuesto" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{Impuesto.nombreImpuesto}">
+                                    <h:outputText value="#{Impuesto.nombreImpuesto.toUpperCase()}" />
+                                </p:column>       
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;"                                      
+                                      icon="ui-icon-check" value="Modificar"   action="#{MBAdministacion.abrirInfodialog(19)}" 
+                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:FrmImpuestos:DialogImpuestos"  />
+                </center>
+                <br/>
+
+
+            </p:outputPanel>
+
+            <!--DIALOGS DE INFORMACION -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogImpuestos">
+
+                <p:dialog header="#{MBAdministacion.tituloDialogImpuestos}" widgetVar="DialogImpuestos" modal="false" height="auto" width="450" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table>
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+
+                            <tr>
+                                <td> <p:outputLabel value="Nombre* "  style="font-family: Arial;font-size: 12px;"  />
+                                    <p:spacer width="10"/>
+                                    <p:inputTextarea value="#{MBAdministacion.nombreImpuesto}" style="font-family: Arial;font-size: 12px;width: 200px; height: 25px;text-transform: uppercase;" placeholder="Ingrese el nombre"/></td>
+                            </tr>
+                        </table>
+
+                        <br/>
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogImpuestos=='Modificar item'}">
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiItemImpuesto()}"  
+                                                                     style="font-family: Arial;font-size: 13px;" value="Modificar" 
+                                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     :contenedorGeneral:Contenedor:FrmImpuestos:DatosImpuestos"
+                                                                     /> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <p:commandButton  icon="ui-icon-disk" value="Guardar" style="font-family: Arial;font-size: 13px;" 
+                                                              actionListener="#{MBAdministacion.regisItemImpuesto()}" id="BTN2"
+                                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                                              :contenedorGeneral:Contenedor:FrmImpuestos:DatosImpuestos" />
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+
+
+                            </tr>
+                        </table>
+                        <br/>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>

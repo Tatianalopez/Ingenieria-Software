@@ -1,0 +1,123 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+       xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>TipoDocumento</title>
+    </h:head> 
+    <h:body> 
+            <h:form id="FrmTiposConstrucciones">
+            <br/>
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión de tipos de construcciones</p></b></big></big>        
+
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo item" update=":contenedorGeneral:Contenedor:FrmTiposConstrucciones:DialogTiposContrucciones" 
+                                         action="#{MBAdministacion.abrirInfodialogRegistro(15)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />            
+                    </td>
+                </tr>
+            </table>
+            <p:outputPanel id="DatosTiposConstruc">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listTipoConstrucc)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="TipoConstrucc" value="#{MBAdministacion.listTipoConstrucc}"
+                                         selectionMode="single" id="TipoConstruccTable" style="font-family: Arial;font-size: 12px;" 
+                                         rowKey="#{TipoConstrucc.codTipoConstruc}" selection="#{MBAdministacion.admTipoConstrucc}" widgetVar="TipoConstrucciones"
+                                         scrollHeight="50" emptyMessage="No se encontraron registros" >
+                                                    
+                                <p:column headerText="Nombre" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{TipoConstrucc.nombreTipoConstrucc}" >
+                                    <h:outputText value="#{TipoConstrucc.nombreTipoConstrucc}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;"                                      
+                                      icon="ui-icon-check" value="Modificar"   action="#{MBAdministacion.abrirInfodialog(15)}" 
+                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:FrmTiposConstrucciones:DialogTiposContrucciones"  />
+                </center>
+                <br/>
+
+
+            </p:outputPanel>
+
+            <!--DIALOGS DE INFORMACION -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogTiposContrucciones">
+
+
+                <p:dialog header="#{MBAdministacion.tituloDialogTipoConstrucc}" widgetVar="DlgTiposConstruc" modal="false" height="auto" width="600" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                           
+                                <tr>
+                                    <td> <p:outputLabel value="Nombre:* "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                    <td><p:inputTextarea value="#{MBAdministacion.nombreTipoConstruc}" style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" placeholder="Ingrese un nombre / descripción"/></td>
+                                </tr>
+                        </table>
+
+                        <br/>
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogTipoConstrucc=='Modificar item'}">
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiItemTipoConstrc() }"  
+                                                                     style="font-family: Arial;font-size: 13px;" value="Modificar" 
+                                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     :contenedorGeneral:Contenedor:FrmTiposConstrucciones:DatosTiposConstruc"
+                                                                     /> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <p:commandButton  icon="ui-icon-disk" value="Guardar" style="font-family: Arial;font-size: 13px;" 
+                                                              actionListener="#{MBAdministacion.regisItemTipoConstrc()}" id="BTN2"
+                                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                                              :contenedorGeneral:Contenedor:FrmTiposConstrucciones:DatosTiposConstruc" />
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+
+
+                            </tr>
+                        </table>
+                        <br/>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>

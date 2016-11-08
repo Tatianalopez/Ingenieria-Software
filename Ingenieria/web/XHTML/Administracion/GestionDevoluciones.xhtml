@@ -1,0 +1,137 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+       xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>TipoDocumento</title>
+    </h:head> 
+    <h:body> 
+            <h:form id="FrmDevoluciones">
+            <br/>
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión de devoluciones de avalúos</p></b></big></big>        
+
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo item" update=":contenedorGeneral:Contenedor:FrmDevoluciones:DialogDevoluciones" 
+                                         action="#{MBAdministacion.abrirInfodialogRegistro(14)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />            
+                    </td>
+                </tr>
+            </table>
+            <p:outputPanel id="DatosDevoluciones">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listDevoluc)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="Devoluc" value="#{MBAdministacion.listDevoluc}"
+                                         selectionMode="single" id="DevolucTable" style="font-family: Arial;font-size: 12px;" 
+                                         rowKey="#{Devoluc.codDevoluc}" selection="#{MBAdministacion.admDevoluc}" widgetVar="Devoluc"
+                                         scrollHeight="50" emptyMessage="No se encontraron registros" >
+
+                                <p:column headerText="Modulo" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{Devoluc.moduloItemDevoluc}">
+                                    <h:outputText value="#{Devoluc.moduloItemDevoluc.toUpperCase()}" />
+                                </p:column>                              
+                                <p:column headerText="Descripción" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{Devoluc.desDevoluc}" >
+                                    <h:outputText value="#{Devoluc.desDevoluc}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;"                                      
+                                      icon="ui-icon-check" value="Modificar"   action="#{MBAdministacion.abrirInfodialog(14)}" 
+                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:FrmDevoluciones:DialogDevoluciones"  />
+                </center>
+                <br/>
+
+
+            </p:outputPanel>
+
+            <!--DIALOGS DE INFORMACION -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogDevoluciones">
+
+
+                <p:dialog header="#{MBAdministacion.tituloDialogDevoluc}" widgetVar="DlgDevoluc" modal="false" height="auto" width="600" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+
+                            <tr>
+                                <td><p:outputLabel value="Modulo:* "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                <td> <p:selectOneMenu  id="ModuloDevoluc" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBAdministacion.moduloDevol}" filter="true"  >
+                                        <f:selectItem  itemValue="" itemLabel="--Seleccione--" />
+                                        <f:selectItem  itemValue="E" itemLabel="ENTREGA DEL AVALÚO" />
+                                        <f:selectItem  itemValue="J" itemLabel="REVISIÓN JURIDICA" />
+                                        <f:selectItem  itemValue="T" itemLabel="REVISIÓN TECNICA" />
+                                        <f:selectItem  itemValue="I" itemLabel="IMPRESIÓN DEL AVALÚO" />
+                                         <f:selectItem  itemValue="F" itemLabel="FACTURACIÓN" />
+                                    </p:selectOneMenu></td>
+                                </tr>
+                                <tr>
+                                    <td> <p:outputLabel value="Descripción:* "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                    <td><p:inputTextarea value="#{MBAdministacion.descripDevol}" style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" placeholder="Ingrese una descripción"/></td>
+                                </tr>
+                        </table>
+
+                        <br/>
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogDevoluc=='Modificar item'}">
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiItemDevoluc() }"  
+                                                                     style="font-family: Arial;font-size: 13px;" value="Modificar" 
+                                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     :contenedorGeneral:Contenedor:FrmDevoluciones:DatosDevoluciones"
+                                                                     /> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <p:commandButton  icon="ui-icon-disk" value="Guardar" style="font-family: Arial;font-size: 13px;" 
+                                                              actionListener="#{MBAdministacion.regisItemDevoluc()}" id="BTN2"
+                                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                                              :contenedorGeneral:Contenedor:FrmDevoluciones:DatosDevoluciones" />
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+
+
+                            </tr>
+                        </table>
+                        <br/>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>

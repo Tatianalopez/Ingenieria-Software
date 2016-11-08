@@ -1,0 +1,435 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Entidades</title>
+        <style>
+          
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="FrmGestionEnti">
+            <!-- Radios para mostrar ya sea el panel de entidades, sucursales o asesores ok--> 
+            <table border="0" cellspacing="2" cellpadding="2">
+                <tr>
+                    <td><big><big><b><p class="Title">Gestión de entidades, sucursales y asesores</p></b></big></big></td>
+                </tr>
+                <tr>
+                    <td colspan="10"> <p:separator /></td>
+                </tr> 
+                <tr>
+                    <td>
+                        <p:panel style="border: none;">
+                            <b><p:outputLabel value="Seleccione la opción a ver y/o modificar " style="font-family:Arial;font-size: 13px;"/></b>
+                            <br/>
+                            <br/>
+                            <p:selectOneRadio id="RBTubi" value="#{MBEntidad.estadoRadioSeleccion}" style="font-family: Arial;font-size: 12px;">
+                                <f:selectItem itemLabel="Gestión de entidades" itemValue="Entidades" />
+                                <f:selectItem itemLabel="Gestión de sucursales" itemValue="Sucursales" />
+                                <f:selectItem itemLabel="Gestión de asesores" itemValue="Asesores" />
+                                <p:ajax event="change" update="
+                                        :contenedorGeneral:Contenedor:FrmGestionEnti:InfEntidad,
+                                        :contenedorGeneral:Contenedor:FrmGestionEnti:InfSucursal,
+                                        :contenedorGeneral:Contenedor:FrmGestionEnti:InfAsesor" listener="#{MBEntidad.visiblePanel()}"/>
+                            </p:selectOneRadio>
+                        </p:panel>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <!-- Datatable que carga todos las entidades -->
+                        <p:outputPanel id="InfEntidad">
+
+                            <p:panel rendered="#{MBEntidad.estPanelEntidad}" style="border: none;">
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                             
+                                        <td>
+                                            <p:commandButton value="Crear una nueva entidad" icon="ui-icon-arrowthick-1-e"  action="#{MBEntidad.abrirDialogRegistrar(1)}" update=":contenedorGeneral:Contenedor:FrmGestionEnti:RegistroEntidad" 
+                                                             style="font-family: Arial;font-size: 13px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBEntidad.cargaEntTodo)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="Entidad" value="#{MBEntidad.cargaEntTodo}" selectionMode="single" id="EntidadTable" style="font-family: Arial;font-size: 12px;" 
+                                                         rowKey="#{Entidad.codEntidad}" selection="#{MBEntidad.entEnt}"  widgetVar="Entidad" 
+                                                         emptyMessage="No se encontraron entidades">
+
+                                                <p:column headerText="Numero" filterBy="#{Entidad.documentoEntidad}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{Entidad.documentoEntidad}"/>
+                                                </p:column>
+                                                <p:column headerText="Nombre"  filterBy="#{Entidad.nombreEntidad}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{Entidad.nombreEntidad}" />
+                                                </p:column>
+                                                <p:column headerText="Regimen"  filterBy="#{Entidad.nombreRegimen} - #{Entidad.nombreTipoRegim}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{Entidad.nombreRegimen} - #{Entidad.nombreTipoRegim}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton
+                                                    update=":contenedorGeneral:Contenedor:FrmGestionEnti:RegistroEntidad,:contenedorGeneral:Contenedor:growl_General" 
+                                                    icon="ui-icon-check" value="Modificar" action="#{MBEntidad.validarDatatable(1)}" style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                </table>                              
+
+
+                            </p:panel>
+                        </p:outputPanel>
+
+                        <!-- Datatable que carga todas la sucursales -->
+                        <p:outputPanel id="InfSucursal">
+                            <p:panel style="font-size: 12px;border: none;" rendered="#{MBEntidad.estPanelSucursal}" >
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                             
+                                        <td>
+                                            <p:commandButton value="Crear una nueva sucursal" icon="ui-icon-arrowthick-1-e" action="#{MBEntidad.abrirDialogRegistrar(2)}" update=":contenedorGeneral:Contenedor:FrmGestionEnti:RegistroSucursal"
+                                                             style="font-family: Arial;font-size: 13px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBEntidad.cargaSucurTodo)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="Sucursal" value="#{MBEntidad.cargaSucurTodo}"  id="SucursalTable" style="font-family: Arial;font-size: 12px;" rowKey="#{Sucursal.codSucursal}" 
+                                                         selection="#{MBEntidad.entsucu}"  widgetVar="Sucursal" selectionMode="single"
+                                                         emptyMessage="No se encontraron sucursales">
+
+                                                <p:column headerText="Entidad"  filterBy="#{Sucursal.nombreEntidadSucursal}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.nombreEntidadSucursal}" />
+                                                </p:column>
+                                                <p:column headerText="Sucursal"  filterBy="#{Sucursal.nombreOfic}" style="font-family:Arial;font-size: 12px;width: 170px;">
+                                                    <h:outputText value="#{Sucursal.nombreOfic}" />
+                                                </p:column>
+                                                <p:column headerText="Telefono"  filterBy="#{Sucursal.telefonoOfic}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.telefonoOfic}" />
+                                                </p:column>
+                                                <p:column headerText="Dirección"  filterBy="#{Sucursal.direccionOfic}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.direccionOfic}" />
+                                                </p:column>
+                                                <p:column headerText="Departamento"  filterBy="#{Sucursal.nombreDeptoSucursal}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.nombreDeptoSucursal}" />
+                                                </p:column>
+                                                <p:column headerText="Ciudad"  filterBy="#{Sucursal.nombreCiudadSucursal}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.nombreCiudadSucursal}" />
+                                                </p:column>
+                                                <p:column headerText="Codigo oficina"  filterBy="#{Sucursal.codOfic}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.codOfic}" />
+                                                </p:column>                      
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton update=":contenedorGeneral:Contenedor:FrmGestionEnti:RegistroSucursal,
+                                                                 :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-check" value="Modificar"  action="#{MBEntidad.validarDatatable(2)}" 
+                                                                 style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                </table>
+
+
+                            </p:panel>
+                        </p:outputPanel>
+
+                        <!-- Datatable que carga todos los asesores -->
+                        <p:outputPanel id="InfAsesor">
+                            <p:panel style="font-size: 12px;border: none;" rendered="#{MBEntidad.estPanelAsesor}">
+
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                            
+                                        <td>
+                                            <p:commandButton value="Crear un asesor" icon="ui-icon-arrowthick-1-e" action="#{MBEntidad.abrirDialogRegistrar(3)}" update=":contenedorGeneral:Contenedor:FrmGestionEnti:RegistroAsesor" 
+                                                             style="font-family: Arial;font-size: 13px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBEntidad.cargaAsesTodo)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="Asesor" value="#{MBEntidad.cargaAsesTodo}"  id="AsesorTable" style="font-family: Arial;font-size: 12px;" rowKey="#{Asesor.codAsesor}" 
+                                                         selection="#{MBEntidad.entAse}"  widgetVar="Asesor" selectionMode="single" emptyMessage="No se encontraron asesores">
+
+                                                <p:column headerText="Entidad" filterBy="#{Asesor.nombreEntidadAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreEntidadAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Sucursal" filterBy="#{Asesor.nombreSucursalAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreSucursalAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Nombre" filterBy="#{Asesor.nombreAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Cargo" filterBy="#{Asesor.cargoAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.cargoAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Mail" filterBy="#{Asesor.mailAsesor}" style="font-family:Arial;font-size: 12px;width: 180px;">
+                                                    <h:outputText value="#{Asesor.mailAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Telefono" filterBy="#{Asesor.telefonoAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.telefonoAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Estado" filterBy="#{Asesor.nombreEstadoAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreEstadoAsesor}" />
+                                                </p:column>                           
+
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton update=":contenedorGeneral:Contenedor:FrmGestionEnti:RegistroAsesor,:contenedorGeneral:Contenedor:growl_General" 
+                                                                 icon="ui-icon-check" value="Modificar"  action="#{MBEntidad.validarDatatable(3)}" 
+                                                                 style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                </table>
+
+
+                            </p:panel>
+                        </p:outputPanel>
+                    </td>
+                </tr>
+            </table>
+
+
+            <!-- Tablas de de entidades, sucursales o asesores ok--> 
+
+
+
+
+            <!--DIALOGS DE Registro / modificacion -->
+
+            <!-- Para Crear/modificar una nueva entidad -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="RegistroEntidad">
+                <p:dialog header="#{MBEntidad.tituloFormEntidad}" widgetVar="DlgCrearEntidad"  height="auto" width="auto" showEffect="fade" hideEffect="fade">                   
+                    <br/>
+                    <table border="0" cellspacing="3" cellpadding="3" style="font-family:Arial;font-size: 12px">
+                        <tr>
+                            <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="N° documento de entidad: *"  /></td>
+                            <td><p:inputText id="txt_num_doc_enti" value="#{MBEntidad.numEntidad}" pt:placeholder="N° Documento" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetrasyNumeros(event)" maxlength="12"/></td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Nombre entidad: *" /></td>
+                            <td><p:inputText id="txt_nom_enti" value="#{MBEntidad.nombreEntidad}" pt:placeholder="Nombre"  style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetras(event)"/></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="Texto" for="Regim" value="Regimen: " />
+                            </td>
+                            <td>
+                                <p:selectOneMenu  id="Regim" style="width: 213px;font-size: 13px;" effect="fade" value="#{MBEntidad.codRegimen}">
+                                    <p:ajax listener="#{MBEntidad.onCalifiReg()}" update="TipoReg"/>
+                                    <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                    <f:selectItems  value="#{MBPerito.cargRegPer}" />
+                                </p:selectOneMenu> 
+                            </td>
+                            <td>
+                                <p:outputLabel styleClass="Texto" for="TipoReg" value="Tipo Regimen:" />
+                            </td>
+                            <td>
+                                <p:selectOneMenu id="TipoReg" style="width: 213px;font-size: 13px;" effect="fade" value="#{MBEntidad.codTipRegimen}">
+                                    <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                    <f:selectItems  value="#{MBEntidad.cargaRegimen}" />
+                                </p:selectOneMenu> 
+                            </td>
+                        </tr> 
+                    </table>
+                    <br/>
+                    <center>
+                        <table style="font-family:Arial;font-size: 13px">
+                            <tr>
+                                <td colspan="2">
+                                    <center>
+                                        <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBEntidad.regisEntidad(1)}" rendered="#{MBEntidad.estadoRegistroEntidad}" id="BtnRegistroEntidad"
+                                                          update=":contenedorGeneral:Contenedor:FrmGestionEnti:InfEntidad,
+                                                          :contenedorGeneral:Contenedor:growl_General" 
+                                                          style="font-family: Arial;font-size: 13px;"/>
+
+                                    </center>
+                                    <p:commandButton  icon="ui-icon-disk" value="Actualizar" action="#{MBEntidad.regisEntidad(2)}" id="BtnActualizaEntidad" rendered="#{MBEntidad.estadoActualizarEntidad}" 
+                                                      update=":contenedorGeneral:Contenedor:FrmGestionEnti:InfEntidad,
+                                                      :contenedorGeneral:Contenedor:growl_General"
+                                                      style="font-family: Arial;font-size: 13px;"/>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </center>
+                    <br/>
+                </p:dialog>
+            </p:outputPanel>
+
+            <!--Crear/modificar una Nueva Sucursal -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="RegistroSucursal">
+                <p:dialog header="#{MBEntidad.tituloFormSucursal}" widgetVar="DlgCrearSucursal" height="auto" width="auto" showEffect="fade" hideEffect="fade">
+
+                    <br/>
+                    <center>
+                        <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Entidad *" /></td>
+                                <td> <p:selectOneMenu  id="Entidad" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.codEntidadSucursal}" filter="true">
+                                        <f:selectItem  itemValue="" itemLabel="--Seleccione--" />
+                                        <f:selectItems  value="#{MBEntidad.cargaEnt}" />
+                                    </p:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td>  <h:outputText value="Codigo de oficina:" /></td>
+                                <td>    <p:inputText id="txt_cod_oficina" value="#{MBEntidad.codOficina}" pt:placeholder="Codigo" style="width: 180px;text-transform: uppercase;" onkeypress="return validarSoloNumeros(event)"/></td>
+                            </tr> 
+                            <tr>
+                                <td> <h:outputText value="Nombre de sucursal: *" /></td>
+                                <td> <p:inputText id="txt_nombre_sucursal" value="#{MBEntidad.nombreSucursal}" pt:placeholder="Nombre" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetras(event)" /></td>
+                            </tr>
+
+                            <tr>
+                                <td><h:outputText value="Telefono: " /></td>
+                                <td><p:inputText id="txt_telefono_sucursal" value="#{MBEntidad.telefonoSucursal}" pt:placeholder="Telefono" style="width: 180px;text-transform: uppercase;" onkeypress="return validarSoloNumeros(event)"/></td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Dirección: " /></td>
+                                <td> <p:inputText id="txt_direccion_sucursal" value="#{MBEntidad.direccionSucursal}" pt:placeholder="Dirección" style="width: 180px;text-transform: uppercase;" /></td>
+                            </tr>
+
+                            <tr>
+                                <td> <h:outputText value="Departamento:* " /></td>
+                                <td><p:selectOneMenu  id="Depto" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.codDeptoSucursal}" filter="true" filterMatchMode="contains">
+                                        <p:ajax listener="#{MBEntidad.onCiudad()}" update="Ciudades"/>
+                                        <f:selectItem  itemValue="" itemLabel="--Seleccione--" />
+                                        <f:selectItems  value="#{MBUbicacion.cargaDep}" />                                
+                                    </p:selectOneMenu> </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Ciudad:* " /></td>
+                                <td> <p:selectOneMenu  id="Ciudades" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.codCiudadSucursal}" filter="true" filterMatchMode="contains">
+                                        <f:selectItem  itemValue="" itemLabel="--Seleccione--" />
+                                        <f:selectItems  value="#{MBEntidad.cargaCiu}" />
+                                    </p:selectOneMenu> </td>
+                            </tr>
+
+                        </table>
+                        <br/>
+                        <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px" >
+                            <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBEntidad.regisSucursal(1)}" rendered="#{MBEntidad.estadoRegistroSucursal}"  id="BtnRegistroSucursal" 
+                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                              :contenedorGeneral:Contenedor:FrmGestionEnti:InfSucursal"
+                                              style="font-family: Arial;font-size: 13px;"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px">
+                            <p:commandButton  icon="ui-icon-disk" value="Actualizar" action="#{MBEntidad.regisSucursal(2)}" id="BtnActualizaSucursal" rendered="#{MBEntidad.estadoActualizarSucursal}" 
+                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                              :contenedorGeneral:Contenedor:FrmGestionEnti:InfSucursal"
+                                              style="font-family: Arial;font-size: 13px;"/>
+                        </h:panelGrid>  
+                    </center>
+                </p:dialog>
+            </p:outputPanel>
+
+            <!--Crear/modificar una Nuevo asesor -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="RegistroAsesor">
+                <p:dialog header="#{MBEntidad.tituloFormAsesor}" widgetVar="DlgCrearAsesor" height="auto" width="auto" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3">
+                        <tr>
+                            <td> <b><p:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                        </tr>
+                        <tr>
+                            <td> <h:outputText value="Entidad*" /></td>
+                            <td> <p:selectOneMenu id="EntidadAsesor" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.fk_entidadAsesor}" filter="true">                                
+                                    <f:selectItem  itemValue="" itemLabel="--Seleccione--"/>
+                                    <f:selectItems  value="#{MBEntidad.cargaEnt}" />
+                                    <p:ajax listener="#{MBEntidad.onSucursalRegis()}" update="SucursalAsesor"/>
+                                </p:selectOneMenu></td>
+                        </tr>
+                        <tr>
+                            <td> <h:outputText value="Sucursal*" /></td>
+                            <td>     <p:selectOneMenu id="SucursalAsesor" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.fk_sucursalAsesor}" filter="true">                                
+                                    <f:selectItem  itemValue="" itemLabel="--Seleccione--"/>
+                                    <f:selectItems  value="#{MBEntidad.cargaSucur}" />
+                                </p:selectOneMenu></td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Nombre: *" /></td>
+                            <td>  <p:inputText id="txt_nombre_asesor" value="#{MBEntidad.nombreAsesor}" pt:placeholder="Nombre" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetras(event)"/></td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Cargo *" /></td>
+                            <td><p:inputText id="txt_cargo_asesor" value="#{MBEntidad.cargoAsesor}" pt:placeholder="Cargo" style="width: 180px;text-transform: uppercase;"  onkeypress="return validarLetras(event)"/></td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Correo: " /></td>
+                            <td><p:inputText id="txt_correo_asesor" value="#{MBEntidad.mailAsesor}" pt:placeholder="Correo" style="width: 180px;text-transform: lowercase;" required="false" 
+                                             validatorMessage="El formato del correo es incorrecto. Ej: ejemplo@dominio"  onkeypress="return validarCorreos(event)">
+                                    <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                </p:inputText></td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Telefono: " /></td>
+                            <td> <p:inputText id="txt_telefono_asesor" value="#{MBEntidad.telefonoAsesor}" pt:placeholder="Telefono" style="width: 180px;" onkeypress="return validarSoloNumeros(event)"/></td>
+                        </tr>
+                        <tr>
+                            <td> <h:outputText value="Estado:*" /></td>
+                            <td><p:selectOneMenu id="EstadoAsesor" style="font-family:Arial;font-size: 12px;width: 150px;" effect="fade" value="#{MBEntidad.estadoAsesor}" >                                
+                                    <f:selectItem  itemValue="" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                    <f:selectItem itemValue="1" itemLabel="HABILITADO" />
+                                    <f:selectItem itemValue="0" itemLabel="DESHABILITADO" />
+                                </p:selectOneMenu></td>
+                        </tr>
+
+                    </table>
+                    <br/>
+                    <center>                     
+                        <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px">
+                            <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBEntidad.regisAsesor(1)}" rendered="#{MBEntidad.estadoRegistroAsesor}" id="BtnRegistroAsesor" 
+                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                              :contenedorGeneral:Contenedor:FrmGestionEnti:InfAsesor"
+                                              style="font-family: Arial;font-size: 13px;"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px">
+                            <p:commandButton  icon="ui-icon-disk" value="Actualizar" action="#{MBEntidad.regisAsesor(2)}" id="BtnActualizaAsesor" rendered="#{MBEntidad.estadoActualizarAsesor}" 
+                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                              :contenedorGeneral:Contenedor:FrmGestionEnti:InfAsesor"
+                                              style="font-family: Arial;font-size: 13px;"/>
+                        </h:panelGrid>
+                    </center>
+                </p:dialog>
+            </p:outputPanel>
+        </h:form>
+    </h:body>
+</html>
+

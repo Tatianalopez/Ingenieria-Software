@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Administración</title>
+        <style>
+            .Menu-general:focus {
+                border-color: orange;
+            }
+        </style>
+    </h:head>
+    <h:body> 
+        <h:form id="SUB_Menu_Administrador"  >
+            <br/>
+            <table style="line-height:10px;font-size:12px;font-family:Arial Black;font-weight:normal;" cellspacing="3" cellpadding="3">
+                <tr>
+                    <td colspan="3"><p:outputLabel value="Gestion administrativa" style="font-weight: bold; font-size: 18px;" /></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><p:separator/></td>
+                </tr>
+                <tr>
+                    <tr>
+                        <td>
+                            <!--INFORMACION DENTRO DE LOS TABS-->
+                            <p:tabView dynamic="true" id="TabSubMenu" effect="fade" >
+                                <p:tab title="Personas">
+                                    <table style="font-family: Arial;font-size: 12px;">
+                                        <tr>
+                                            <td>
+                                                <h:panelGroup>
+                                                    <center>                                  
+                                                        <p:commandButton value="Empleados" action="#{beanDireccionar.url_MenusInternos('Gestion_Empleado')}"  ajax="false" styleClass="Menus-internos" icon="ui-icon-person" />
+                                                    </center> 
+                                                </h:panelGroup>
+                                            </td>
+                                            <td>
+                                                <h:panelGroup id="pperitos" >
+                                                    <center>
+                                                        <p:commandButton value="Avaluadores" action="#{beanDireccionar.url_MenusInternos('Gestion_Peritos')}" ajax="false" styleClass="Menus-internos" icon="ui-icon-person" />
+                                                    </center>
+                                                </h:panelGroup>
+                                            </td>
+                                            <td>
+                                                <h:panelGroup>
+                                                    <p:commandButton value="Estados usuarios" action="#{beanDireccionar.url_MenusInternos('Gestion_Estados')}" ajax="false" styleClass="Menus-internos" icon="ui-icon-info" />
+                                                </h:panelGroup>
+                                            </td>
+                                            <td>
+                                                <h:panelGroup>
+                                                    <p:commandButton value="Tipo de documento" action="#{beanDireccionar.url_MenusInternos('ConsultaTipoDocumento')}" ajax="false" styleClass="Menus-internos" icon="ui-icon-contact" />
+                                                </h:panelGroup>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h:panelGroup>
+                                                    <p:commandButton value="Cargo organizacional" action="#{beanDireccionar.url_MenusInternos('GCargos')}" ajax="false" styleClass="Menus-internos" icon="ui-icon-document-b" />
+                                                </h:panelGroup>
+                                            </td>
+                                            <td>
+                                                <h:panelGroup>
+                                                    <p:commandButton value="Roles" action="#{beanDireccionar.url_MenusInternos('ConsultaRoles')}" ajax="false" styleClass="Menus-internos" icon="ui-icon-unlocked"/>
+                                                </h:panelGroup>
+                                            </td>
+                                            <td>
+                                                <h:panelGroup>
+                                                    <p:commandButton value="Regimen" action="#{beanDireccionar.url_MenusInternos('ConsultaRegimen')}" ajax="false" styleClass="Menus-internos" icon="ui-icon-tag"/>
+                                                </h:panelGroup>
+                                            </td>
+                                            <td>
+                                                <h:panelGroup>
+                                                    <p:commandButton value="Entidades" action="#{beanDireccionar.url_MenusInternos('GestionEntidades')}" ajax="false" styleClass="Menus-internos" icon="ui-icon-note" />
+                                                </h:panelGroup>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </p:tab>
+                            </p:tabView>
+                        </td>
+
+                    </tr>
+                </tr>
+            </table>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,136 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+       xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>TipoDocumento</title>
+    </h:head> 
+    <h:body> 
+        <h:form id="FrmListaChequeo">
+            <br/>
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión listas de chequeo</p></b></big></big>        
+
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo item" update=":contenedorGeneral:Contenedor:FrmListaChequeo:DialogListaChequeo" 
+                                         action="#{MBAdministacion.abrirInfodialogRegistro(13)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />            
+                    </td>
+                </tr>
+            </table>
+            <p:outputPanel id="DatosListaChequeo">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listChequeoItems)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="ListaChequeo" value="#{MBAdministacion.listChequeoItems}"
+                                         selectionMode="single" id="ListaChequeoTable" style="font-family: Arial;font-size: 12px;" 
+                                         rowKey="#{ListaChequeo.codItem}" selection="#{MBAdministacion.admListaChequeo}"  widgetVar="ListaChequeo"
+                                         scrollHeight="50" emptyMessage="No se encontraron registros" >
+
+                                <p:column headerText="Modulo" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{ListaChequeo.moduloItem}">
+                                    <h:outputText value="#{ListaChequeo.moduloItemText.toUpperCase()}" />
+                                </p:column>                              
+                                <p:column headerText="Descripción" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{ListaChequeo.desItem}" >
+                                    <h:outputText value="#{ListaChequeo.desItem}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;"                                      
+                                      icon="ui-icon-check" value="Modificar"   action="#{MBAdministacion.abrirInfodialog(13)}" 
+                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:FrmListaChequeo:DialogListaChequeo"  />
+                </center>
+                <br/>
+
+
+            </p:outputPanel>
+
+            <!--DIALOGS DE INFORMACION -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogListaChequeo">
+
+
+                <p:dialog header="#{MBAdministacion.tituloDialogListChequeo}" widgetVar="DlgListaChequeo" modal="false" height="auto" width="600" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+
+                            <tr>
+                                <td><p:outputLabel value="Modulo:* "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                <td> <p:selectOneMenu  id="ModuloListaChequeo" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBAdministacion.moduloItem}" filter="true"  >
+                                        <f:selectItem  itemValue="" itemLabel="--Seleccione--" />
+                                        <f:selectItem  itemValue="EA" itemLabel="ENTREGA DEL AVALÚO" />
+                                        <f:selectItem  itemValue="RJ" itemLabel="REVISIÓN JURIDICA" />
+                                        <f:selectItem  itemValue="RT" itemLabel="REVISIÓN TECNICA" />
+                                        <f:selectItem  itemValue="IA" itemLabel="IMPRESIÓN DEL AVALÚO" />
+                                    </p:selectOneMenu></td>
+                                </tr>
+                                <tr>
+                                    <td> <p:outputLabel value="Descripción:* "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                    <td><p:inputTextarea value="#{MBAdministacion.descripItem}" style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" placeholder="Ingrese una descripción"/></td>
+                                </tr>
+                        </table>
+
+                        <br/>
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogListChequeo=='Modificar item'}">
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiItemListaCheq()}"  
+                                                                     style="font-family: Arial;font-size: 13px;" value="Modificar" 
+                                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     :contenedorGeneral:Contenedor:FrmListaChequeo:DatosListaChequeo"
+                                                                     /> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <p:commandButton  icon="ui-icon-disk" value="Guardar" style="font-family: Arial;font-size: 13px;" 
+                                                              actionListener="#{MBAdministacion.regisItemListaCheq()}" id="BTN2"
+                                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                                              :contenedorGeneral:Contenedor:FrmListaChequeo:DatosListaChequeo" />
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+
+
+                            </tr>
+                        </table>
+                        <br/>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>

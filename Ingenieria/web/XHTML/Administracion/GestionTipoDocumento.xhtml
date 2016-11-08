@@ -1,0 +1,140 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>TipoDocumento</title>
+    </h:head> 
+    <h:body> 
+        <h:form id="formTipDoc">
+            <br/>
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión tipo de documento</p></b></big></big>        
+                        
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo documento" update=":contenedorGeneral:Contenedor:formTipDoc:DialogTipDocumento" 
+                                         action="#{MBAdministacion.abrirInfodialogRegistro(1)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />            
+                    </td>
+                </tr>
+            </table>
+            <p:outputPanel id="DatosTipDocumento">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>
+                             <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listTipDocumento)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="TipDoc" value="#{MBAdministacion.listTipDocumento}"
+                                         selectionMode="single" id="TipDocTable" style="font-family: Arial;font-size: 12px;" 
+                                         rowKey="#{TipDoc.codTipDocumento}" selection="#{MBAdministacion.admTipDoc}"  widgetVar="Tipo_Documento"
+                                         scrollHeight="50" emptyMessage="No se encontraron registros" >
+
+                                <p:column headerText="N* Registro" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{TipDoc.codTipDocumento}">
+                                    <h:outputText value="#{TipDoc.codTipDocumento}" />
+                                </p:column>
+                                <p:column headerText="Nombre" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{TipDoc.nomTipDocumento}" >
+                                    <h:outputText value="#{TipDoc.nomTipDocumento}" />
+                                </p:column>
+                                <p:column headerText="Descripción" style="font-family:Arial;font-size: 12px;width: 150px;" filterBy="#{TipDoc.desTipDocumento}" >
+                                    <h:outputText value="#{TipDoc.desTipDocumento}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;"                                      
+                                      icon="ui-icon-check" value="Modificar"   action="#{MBAdministacion.abrirInfodialog(1)}" 
+                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:formTipDoc:DialogTipDocumento"  />
+                </center>
+                <br/>
+
+                
+            </p:outputPanel>
+            
+            <!--DIALOGS DE INFORMACION -->
+             <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogTipDocumento">
+
+
+                    <p:dialog header="#{MBAdministacion.tituloDialogTipDoc}" widgetVar="DlgTipDocumento" modal="false" height="auto" width="600" showEffect="fade" hideEffect="fade">
+                        <br/>
+                        <center>
+                            <table cellspacing="3" cellpadding="3">
+                                <tr>
+                                    <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                                </tr>
+
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogTipDoc=='Modificar tipo de documento'}">
+                                        <tr>
+                                            <td><p:outputLabel value="N* de registro: "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                            <td><p:outputLabel value="#{MBAdministacion.codTable}"  style="font-family: Arial;font-size: 12px;" /></td>
+                                        </tr>
+                                    </c:when>
+                                </c:choose>
+                                <tr>
+                                    <td><p:outputLabel value="Nombre:* "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                    <td> <p:inputText  value="#{MBAdministacion.nombreTable}"  style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" placeholder="Nombre de documento" onkeypress="return validarLetrasyNumeros(event)" /></td>
+                                </tr>
+                                <tr>
+                                    <td> <p:outputLabel value="Descripción :* "  style="font-family: Arial;font-size: 12px;"  /></td>
+                                    <td><p:inputTextarea value="#{MBAdministacion.desTable}" style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" placeholder="Descripción sobre este documento"/></td>
+                                </tr>
+                            </table>
+
+                            <br/>
+                            <table>
+                                <tr>
+                                    <c:choose>
+                                        <c:when test="#{MBAdministacion.tituloDialogTipDoc=='Modificar tipo de documento'}">
+                                            <td>
+                                                <center><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiTipDocument()}"  
+                                                                         style="font-family: Arial;font-size: 13px;" value="Modificar" 
+                                                                         update=":contenedorGeneral:Contenedor:growl_General,
+                                                                         :contenedorGeneral:Contenedor:formTipDoc:DatosTipDocumento"
+                                                                         /> </center>
+                                            </td>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <td>
+                                                <p:commandButton  icon="ui-icon-disk" value="Guardar" style="font-family: Arial;font-size: 13px;" 
+                                                                  actionListener="#{MBAdministacion.regisTipDocumento()}" id="BTN2"
+                                                                  update=":contenedorGeneral:Contenedor:growl_General,
+                                                                  :contenedorGeneral:Contenedor:formTipDoc:DatosTipDocumento" />
+                                            </td>
+                                        </c:otherwise>
+                                    </c:choose>
+
+
+                                </tr>
+                            </table>
+                            <br/>
+                        </center>
+
+                    </p:dialog>
+                </p:outputPanel>
+       
+
+        </h:form>
+    </h:body>
+</html>

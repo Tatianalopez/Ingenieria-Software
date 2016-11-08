@@ -1,0 +1,148 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"     
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Estado</title>
+        <style>
+            .ui-datatable .ui-state-highlight {                 
+                border: 2px inset  #e3a1a1 !important ;
+                background: #f6f6f6 !important;
+            }
+        </style>
+    </h:head>
+    <h:body> 
+        <h:form id="formEst">
+            <br/>
+            <table cellspacing="4" cellpadding="4" style="width: auto;" border="0"> 
+                <tr>
+                    <td>
+                        <big><big><b><p class="Title">Gestión de estados</p></b></big></big>           
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo estado" action="#{MBAdministacion.abrirInfodialogRegistro(2)}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e"  
+                                         update=":contenedorGeneral:Contenedor:growl_General,
+                                         :contenedorGeneral:Contenedor:formEst:DialogEstados"/>
+                    </td>
+                </tr>
+
+
+            </table>
+            <p:outputPanel id="DatosEstados">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                             <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listEstado)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- scrollHeight="100" scrollable="true"  scrollRows="8" liveScroll="true"-->
+                            <p:dataTable var="Est" value="#{MBAdministacion.listEstado}" id="EstTable" style="font-family: Arial;font-size: 12px;width: auto;" selectionMode="single"
+                                         widgetVar="Estado" selection="#{MBAdministacion.admEstados}" rowKey="#{Est.codEstado}"   emptyMessage="No se encontraron registros">             
+                                <p:column headerText="Nombre" filterBy="#{Est.nombreEstado}" style="font-family:Arial;font-size: 12px;width: auto;">
+                                    <h:outputText value="#{Est.nombreEstado}" />
+                                </p:column>
+                                <p:column headerText="Descripción" filterBy="#{Est.desEstado}" style="font-family:Arial;font-size: 12px;width: auto;">
+                                    <h:outputText value="#{Est.desEstado}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+
+                <br/>
+                <center>
+                    <p:commandButton  style="font-family: Arial;font-size: 13px;" 
+                                      action="#{MBAdministacion.abrirInfodialog(2)}"  icon="ui-icon-search" value="Modificar" 
+                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                      :contenedorGeneral:Contenedor:formEst:DialogEstados" />
+                </center>
+                <br/>
+            </p:outputPanel>
+
+            <!--DIALOGS DE INFORMACION -->
+
+            <!-- Para modificacion de la informacion -->
+            <p:outputPanel id="DialogEstados" style="font-family: Arial;font-size: 12px;" >
+                <p:dialog header="#{MBAdministacion.tituloDialogEstado}" widgetVar="DlgEstado" modal="false" height="auto" width="600" showEffect="fade" hideEffect="fade">
+
+
+                    <center>
+                        <br/>
+                        <table  cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>  
+                                <td><p:outputLabel value="Nombre: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.nombreTable == 'ACTIVO' || MBAdministacion.nombreTable == 'INACTIVO' || MBAdministacion.nombreTable == 'BLOQUEADO'  }"> 
+
+                                        <td><p:outputLabel  value="#{MBAdministacion.nombreTable}"  style="font-family: Arial;font-size: 12px;" /></td>                                
+
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td> <p:inputText id="EstNom" value="#{MBAdministacion.nombreTable}" placeholder="Nombre del estado"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;"  onkeypress="return validarLetrasyNumeros(event)"/></td>
+                                    </c:otherwise>
+                                </c:choose>
+
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel value="Descripción :* "  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td> <p:inputTextarea id="Des1"  value="#{MBAdministacion.desTable}" placeholder="Descripción para este estado"  style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" /></td>
+                            </tr>
+
+
+                        </table>                     
+
+                        <br/>
+
+                        <table border="0">
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogEstado == 'Registrar nuevo estado'}">
+
+                                        <td>
+                                            <center><p:commandButton  icon="ui-icon-disk" action="#{MBAdministacion.regisEstado()}" style="font-family: Arial;font-size: 13px;"
+                                                                      value="Guardar" update=":contenedorGeneral:Contenedor:growl_General,
+                                                                      :contenedorGeneral:Contenedor:formEst:DatosEstados" id="BTN1"/> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiEstado()}"  style="font-family: Arial;font-size: 13px;"  
+                                                                     value="Modificar" update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     :contenedorGeneral:Contenedor:formEst:DatosEstados" id="BTN2"/> </center>
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+
+                        </table>
+
+                        <br/>
+
+
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,166 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>TODO supply a title</title>
+        <script type="text/javascript">
+            function limpiarForm()
+            {
+                document.getElementById("formLogin").reset();
+            }
+            
+            
+        </script>
+    </h:head>
+    <h:body> 
+        <h:form id="formLogin">
+            <p:growl id="msj4" showDetail="true" sticky="true"/>
+            <div style="height: 18%"/>
+            <div id="logeo">
+                <center>
+                    <c:choose>
+                        <c:when test="#{MBLogin.resulto == 'mal'}">
+                            <p:graphicImage  value="../images/logo_siai.png" width="25%" height="15%"/>
+                        </c:when>
+                        <c:otherwise>
+                            <p:graphicImage  value="images/logo_siai.png" width="25%" height="15%"/>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="#{MBLogin.resulto == 'bien'}">
+                            <p:graphicImage  value="../../images/logo_siai.png" width="300" height="100"/>
+                        </c:when>
+                    </c:choose>
+
+                    <p>
+                        <p:inputText id="lastname" pt:placeholder="Usuario" value="#{MBLogin.nomUsuario}" style="font-family: Arial;font-size: 12px;width: 13%;height: 4%"/>
+                    </p>
+                    <p>
+                        <p:password  pt:placeholder="Password" value="#{MBLogin.passUsuario}" style="font-family: Arial;font-size: 12px;width: 13%;height: 4%"/>
+                    </p>
+                    <p:commandButton value="Ingresar" action="#{MBLogin.login()}" icon="ui-icon-key" ajax="false"
+                                     style="
+                                     width: 13%;
+                                     height: 3.7%;
+                                     background: -webkit-gradient(linear, center top, center bottom, from(#fff), to(#ccc));
+                                     background-image: linear-gradient(#fff, #ccc);
+                                     border-radius: 10px;
+                                     border: none;
+                                     box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.4);
+                                     font-size: 12px;"/>
+                    <br/><br/>
+                    <center> <p:commandLink value="¿Problemas con su autenticación?" type="button" onclick="PF('RecuperarPass').show();" styleClass="Link"/></center>
+                </center>
+            </div>
+            
+            <p:outputPanel >
+                <p:dialog header="Problema con la autenticacion" id="dialogAutenticacion" widgetVar="RecuperarPass" modal="true" height="auto" width="700" resizable="false" style="font-family: Arial;font-size: 13px;" showEffect="fade" hideEffect="fade">
+                <p:accordionPanel style="font-family: Arial;font-size: 12px;" >
+                    <p:tab title="¿Olvido contraseña?" >
+                        <center>
+                            <table style="font-family: Arial;font-size: 13px;">
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <b><p:outputLabel value="Por cuestiones de seguridad solicitamos que ingrese la siguiente información" /><br/> </b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                   <td><p:separator/></td>
+                                </tr>
+                            </table>
+                            <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3">
+                                
+                                <tr>
+                                    <td><p:outputLabel value="Usuario:* " style="font-weight: bold" /></td>
+                                    <td><p:inputText id="Usu1"  value="#{MBLogin.nomUsuario1}" pt:placeholder="Usuario" /></td>
+                                </tr>
+                                <tr>
+                                    <td><p:outputLabel value="Documento de identidad: *" style="font-weight: bold" /></td>
+                                    <td><p:inputText id="Doc8"  value="#{MBLogin.docEmp}" pt:placeholder="N° de documento" onkeypress="return validarSoloNumeros(event)"/></td>
+                                </tr>                                
+                            </table>
+                            <br/>
+                            <table style="font-family: Arial;font-size: 13px;">
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <p:commandButton icon="ui-icon-check" actionListener="#{MBLogin.envioPasswordCorreo()}" value="Enviar"  update=":indexx:formLogin:msj4"/> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+                    </p:tab>
+                    <p:tab title="¿Olvido su usuario?">
+                        <center>
+                            <table style="font-family: Arial;font-size: 13px;">
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <b><p:outputLabel value="Su usuario llegará al correo registrado en la aplicación una ves ingrese su documento de identidad" /><br/> </b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                   <td ><p:separator/></td>
+                                </tr>
+                            </table>
+                            <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3">
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <b><i><p class="Texto" align="center"></p></i></b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><p:outputLabel value="Documento de Identidad:* " style="font-weight: bold" /></td>
+                                    <td><p:inputText id="Doc1"  value="#{MBLogin.docEmp1}" pt:placeholder="N° de documento" onkeypress="return validarSoloNumeros(event)"/></td>
+                                </tr>                               
+                            </table>
+                            <br/>
+                            <table style="font-family: Arial;font-size: 13px;">
+                                 <tr>
+                                    <td colspan="2" align="center">
+                                        <p:commandButton icon="ui-icon-check" action="#{MBLogin.envioUsuarioCorreo()}" value="Enviar"  update=":indexx:formLogin:msj4"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+                    </p:tab>
+                    <p:tab title="Contacte al administrador">
+                        <center>
+                            <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3" >
+                                <tr>
+                                    <td><p:outputLabel value="Documento de Identidad" style="font-weight: bold" /></td>
+                                    <td> <p:inputText id="Doc9"  value="#{MBLogin.docEmp2}" pt:placeholder="N° de documento" onkeypress="return validarSoloNumeros(event)"/></td>
+                                </tr>
+                                <tr>
+                                    <td><p:outputLabel value="Novedades:" style="font-weight: bold" /></td>
+                                    <td>
+                                        <p:inputTextarea id="Doc10"  value="#{MBLogin.novedad}" pt:placeholder="Reporte su novedad" />
+                                    </td>
+                                </tr>                              
+                                
+                            </table>
+                             <table style="font-family: Arial;font-size: 13px;">
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <b><p:outputLabel value="Las novedades se haran llegar al administrador" /><br/> </b>
+                                    </td>
+                                </tr>                           
+                            </table>
+                            <br/>
+                            <table style="font-family: Arial;font-size: 13px;">
+                                 <tr>
+                                    <td colspan="2" align="center">
+                                        <p:commandButton icon="ui-icon-check" action="#{MBLogin.envioAdminCorreo()}" value="Enviar"  update=":indexx:formLogin:msj4"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                        </center>
+                    </p:tab>
+                </p:accordionPanel>
+            </p:dialog>
+            </p:outputPanel>
+           
+        </h:form>
+    </h:body>
+</html>

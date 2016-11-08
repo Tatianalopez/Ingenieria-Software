@@ -1,0 +1,165 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Gestion de tablas de impuesto</title>
+        <style type="text/css">
+            .ui-datatable-footer {
+                background: #ededed  !important;
+            }
+        </style>
+    </h:head>
+    <h:body> 
+        <h:form id="FRMGesTablasImpuesto">
+            <br/>
+            <table cellspacing="4" cellpadding="4" >
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Parametrización de impuestos</p></b></big></big>                                
+                    </td>                 
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear un nueva tabla" update=":contenedorGeneral:Contenedor:growl_General,
+                                         :contenedorGeneral:Contenedor:FRMGesTablasImpuesto:DialogCrearTablasImpuesto" action="#{MBFacturacion.abrirDialogRegistroTablaImpuestos()}"  style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e"/>
+                    </td>
+                    <td>
+                        <p:commandButton value="Inactivar impuesto" icon="ui-icon-close"  actionListener ="#{MBFacturacion.inhabilitar('AbrirPop')}"
+                                         update=":contenedorGeneral:Contenedor:growl_General, TablasImpuestosDatos"  style="font-size: 13px;" ajax="true" >
+                            <f:ajax  id="ajax"  execute="@this"/>
+                        </p:commandButton>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <!-- Dialogo inhabilitar-->
+            <p:dialog header="Confirmar inhabilitación de impuestos" widgetVar="inhabilitar" resizable="false" closable="false" height="auto" width="auto" showEffect="fade" hideEffect="fade" style="font-size: 12px;font-family: Arial">
+                <center>
+                    <br/>
+                    <table border="0" >           
+                        <tr>
+                            <td ><center><p:outputLabel style="font-size: 14px;font-family: Arial" value="¿Esta seguro de que desea inhabilitar el impuesto seleccionado?"/></center></td>
+                        </tr>  
+                        <tr>  
+                            <td><center><p:outputLabel style="font-size: 14px;font-family: Arial" value="Recuerde que este proceso no tiene reversa"/></center></td>
+                        </tr>  
+                        <tr><td>
+                                <p:spacer height="10"/>
+                            </td></tr>
+                        <tr>                           
+                            <td><center>
+                                    <p:commandButton value="Aceptar" icon="ui-icon-close"  actionListener ="#{MBFacturacion.inhabilitar('inhabilitar')}"  onclick="PF('inhabilitar').hide()"
+                                                     update=":contenedorGeneral:Contenedor:growl_General, TablasImpuestosDatos"  style="font-size: 13px;" ajax="true" >
+                                        <f:ajax  id="ajax"  execute="@form"/>
+                                    </p:commandButton>
+                                    <p:spacer width="10"/>
+                                    <p:commandButton value="cancelar" icon="ui-icon-close" styleClass="ui-confirmdialog-no" onclick="PF('inhabilitar').hide()" update=":contenedorGeneral:Contenedor" ajax="true" style="font-family:Arial;font-size: 13px;"/>
+
+                                </center></td>
+                        </tr>
+                    </table>
+                </center>
+            </p:dialog>
+            <p:outputPanel id="TablasImpuestosDatos">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- {fn:length(MBAdministacion.listCargos)} -->
+                        <td>
+                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBFacturacion.listTablasImpuestos)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="TablasImpuestos" value="#{MBFacturacion.listTablasImpuestos}"  id="TablasImpuestos" style="font-family: Arial;font-size: 12px;" 
+                                         selectionMode="single" widgetVar="Cargos" selection="#{MBFacturacion.admTablasImpues}" rowKey="#{TablasImpuestos.cod_TablaImpuesto}" 
+                                         emptyMessage="No se encontraron registros">
+
+                                <p:column headerText="Nombre"  filterBy="#{TablasImpuestos.nombre_Impuesto}" filterStyle="width:140px" style="font-family:Arial;font-size: 12px;">
+                                    <h:outputText value="#{TablasImpuestos.nombre_Impuesto}" />
+                                </p:column>
+                                <p:column headerText="Tasa"  filterBy="#{TablasImpuestos.tasaTablaImpuesto}" filterStyle="width:140px" style="font-family:Arial;font-size: 12px; ">
+                                    <h:outputText value="#{TablasImpuestos.tasaTablaImpuesto}" />
+                                </p:column>
+                                <p:column headerText="Fecha Inicio"  filterBy="#{TablasImpuestos.fechaInicioTablaImpues}" filterStyle="width:140px" style="font-family:Arial;font-size: 12px;">
+                                    <h:outputText value="#{TablasImpuestos.fechaInicioTablaImpues}" />
+                                </p:column>
+                                <p:column headerText="Fecha Final"  filterBy="#{TablasImpuestos.fechaFinTablaImpues}" filterStyle="width:140px" style="font-family:Arial;font-size: 12px; ">
+                                    <h:outputText value="#{TablasImpuestos.fechaFinTablaImpues}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+            </p:outputPanel>
+
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogCrearTablasImpuesto" autoUpdate="true">
+                <p:dialog header="Registro / Visualización de tablas de impuestos" widgetVar="DialogCrearTablasImpuesto" modal="false" height="200" width="500" showEffect="fade" hideEffect="fade" >
+                    <center>
+                        <table cellspacing="3" cellpadding="3" style="font-family: Arial;font-size: 12px;">
+                            <tr>
+                                <td colspan="2"> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>                            
+                            <tr>
+                                <td colspan="1" >
+                                    <p:outputLabel for="CmbNombreImpuesto" value="Nombre de impuesto:* " style="font-family: Arial;font-size: 12px;"/>
+                                </td>
+                                <td colspan="1">
+                                    <p:selectOneMenu  style="width:200px;font-size: 12px;" value="#{MBFacturacion.facTablas.fk_Cod_Impuesto}" id="CmbNombreImpuesto">
+                                        <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                        <f:selectItems  value="#{MBFacturacion.listTiposImpuestos}"/>
+                                    </p:selectOneMenu>
+                                </td>                               
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel  value="Fecha Inicio:"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td><p:outputLabel value="#{MBAdministacion.fecha_actual}" /></td>
+                            </tr>
+
+                            <tr>
+                                <td><h:outputText value="Tasa %: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>  <p:inputText id="TxtNombreTablaFactur" value="#{MBFacturacion.facTablas.tasaTablaImpuesto}" pt:placeholder="Ingrese valor de tasa" style="font-family: Arial;font-size: 12px;text-transform: uppercase;width: 50px;" 
+                                                   onkeypress="return validarLetrasyNumeros(event)"/></td>
+                            </tr>
+                            <tr>
+                                <table>
+                                    <tr>
+                                        <td colspan="4">
+                                            <center>
+                                                <center>
+
+                                                    <p:commandButton value="Guardar" icon="ui-icon-arrowthick-1-e"  actionListener ="#{MBFacturacion.registrarTablaImpuestos()}"
+                                                                     update=":contenedorGeneral:Contenedor:growl_General, TablasImpuestosDatos"  style="font-size: 13px;" ajax="true" >
+                                                        <f:ajax  id="ajax"  execute="@this"/>
+                                                    </p:commandButton>
+                                                </center>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </tr>
+                        </table>
+                        <br/>                        
+
+                    </center>
+
+
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>

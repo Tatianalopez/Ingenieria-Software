@@ -1,0 +1,126 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/iconos/logo.ico"/> 
+        <!--Validacion de script para toda la aplicacion-->
+        <script>
+            function SIAI() {
+                window.location.hash = "SIAI";
+                window.location.hash = "Again-SIAI"; //chrome
+                window.onhashchange = function() {
+                    window.location.hash = "SIAI";
+                };
+                
+            }
+            
+             function validarLetras(e) {
+                Key = e.KeyCode || e.which;
+                teclado = String.fromCharCode(Key).toLowerCase();
+                letras = "abcdefghijklmnñopqrstuvwxyz´ü ";
+                especiales = "8 - 37 - 38 - 164 - 129 - 239";
+                teclado_especial = false;
+                for (var i in especiales) {
+                    if (Key === especiales[i]) {
+                        teclado_especial = true;
+                        break;
+                    }
+                }
+                if (letras.indexOf(teclado) === -1) {
+                    if (!teclado_especial) {
+                        alert("El caracter no es una letra");
+                        return false;
+                    }
+                }
+            }
+
+            function validarTelefonosyCelures(e) {
+                Key = e.KeyCode || e.which;
+                teclado = String.fromCharCode(Key).toLowerCase();
+                numeros = "0123456789-,.";
+                especiales = "8 - 13 - 37 - 38 - 196";
+                teclado_especial = false;
+                for (var i in especiales) {
+                    if (Key === especiales[i]) {
+                        teclado_especial = true;
+                        break;
+                    }
+                }
+                if (numeros.indexOf(teclado) === -1) {
+                    if (!teclado_especial) {
+                        alert("El caracter no es un numero");
+                        return false;
+                    }
+                }
+            }
+            function validarSoloNumeros(e) {
+                Key = e.KeyCode || e.which;
+                teclado = String.fromCharCode(Key).toLowerCase();
+                numeros = "0123456789-,.";
+                especiales = "8 - 13 - 37 - 38";
+                teclado_especial = false;
+                for (var i in especiales) {
+                    if (Key === especiales[i]) {
+                        teclado_especial = true;
+                        break;
+                    }
+                }
+                if (numeros.indexOf(teclado) === -1) {
+                    if (!teclado_especial) {
+                        alert("El caracter no es un numero");
+                        return false;
+                    }
+                }
+            }
+
+            function validarLetrasyNumeros(e) {
+                Key = e.KeyCode || e.which;
+                teclado = String.fromCharCode(Key).toLowerCase();
+                numerosyletras = "0123456789abcdefghijklmnñopqrstuvwxyz ´";
+                especiales = "8 - 13 - 37 - 38 - 46 - 239 - 165";
+                teclado_especial = false;
+                for (var i in especiales) {
+                    if (Key === especiales[i]) {
+                        teclado_especial = true;
+                        break;
+                    }
+                }
+                if (numerosyletras.indexOf(teclado) === -1) {
+                    if (!teclado_especial) {
+                        alert("El caracter no es una letra ni un numero");
+                        return false;
+                    }
+                }
+            }
+
+            function validarCorreos(e) {
+                Key = e.KeyCode || e.which;
+                teclado = String.fromCharCode(Key).toLowerCase();
+                numerosyletras = "0123456789abcdefghijklmnñopqrstuvwxyz´ü.-_@";
+                especiales = "8 - 13 - 37 - 38 - 46 - 64 - 196 - 239 - 165 - 129 - 95";
+                teclado_especial = false;
+                for (var i in especiales) {
+                    if (Key === especiales[i]) {
+                        teclado_especial = true;
+                        break;
+                    }
+                }
+                if (numerosyletras.indexOf(teclado) === -1) {
+                    if (!teclado_especial) {
+                        alert("El caracter no es correcto");
+                        return false;
+                    }
+                }
+            }
+        </script>
+        <h:outputStylesheet name="./css/estilo.css"/>
+        <title>SIAI 2.0</title>
+    </h:head>
+    <h:body onload="SIAI();">
+        <h:form id="indexx">
+            <p:growl id="growl_Index" showDetail="true" sticky="true" life="20000" />
+            <ui:include src="XHTML/Cuerpo/login.xhtml"/>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:p="http://primefaces.org/ui">
+    <h:form>
+        <p:idleMonitor onactive="PF('sessionTimeOutDialog').show()" timeout="1800000" />
+        <p:dialog header="Tiempo de sesion caducado" widgetVar="sessionTimeOutDialog" modal="true" closable="false" resizable="false" width="400" visible="false">
+            <center>
+                <h:outputText value="Su tiempo de sesion ha caducado por inactividad" />
+            </center>
+            <br></br>
+            <br></br>
+            <center>
+                <p:commandButton id="confirmBackToLogin" value="Iniciar sesion de nuevo" ajax="false" action="#{MBSesion.cerrarSession()}" />
+            </center>
+        </p:dialog>  
+    </h:form>
+</html>

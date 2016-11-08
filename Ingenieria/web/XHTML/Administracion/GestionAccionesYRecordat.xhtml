@@ -1,0 +1,237 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Entidades</title>
+    </h:head>
+    <h:body>
+        <h:form id="FrmGestionAccionesRecordat">
+            <!-- Radios para mostrar ya sea el panel de entidades, sucursales o asesores ok--> 
+
+            <table>
+                <tr>
+                    <td><big><big><b><p class="Title">Gestión de actividades y recordatorios</p></b></big></big></td>
+                </tr>
+                <tr>
+                    <td colspan="10"> <p:separator /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:panel style="border: none;">
+                            <b><p:outputLabel value="Seleccione la opción a ver y/o modificar " style="font-family:Arial;font-size: 13px;"/></b>
+                            <br/>
+                            <br/>
+                            <p:selectOneRadio value="#{MBAdministacion.estadoRadioSeleccionActiviYRecord}" style="font-family:Arial;font-size: 12px;">
+                                <f:selectItem itemLabel="Gestión de actividades" itemValue="GesAcccion" />
+                                <f:selectItem itemLabel="Gestión de recordatorios" itemValue="GesRecordat" />                    
+                                <p:ajax event="change" update="
+                                        :contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:InfAcciones,
+                                        :contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:InfRecordat" listener="#{MBAdministacion.visiblePanelActividRecordat()}"/>
+                            </p:selectOneRadio>
+                        </p:panel>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <!-- Tablas de actividades y recordatorios ok--> 
+
+                        <!-- Datatable que carga todas las actividades -->
+                        <p:outputPanel id="InfAcciones">
+
+                            <p:panel rendered="#{MBAdministacion.estadoRadioSeleccionActiviYRecord == 'GesAcccion'}" style="border: none;">
+                                <table   cellspacing="4" cellpadding="4">
+                                    <tr>                             
+                                        <td>
+                                            <p:commandButton value="Crear una nueva actividad" icon="ui-icon-arrowthick-1-e"  action="#{MBAdministacion.abrirInfodialogRegistro(10)}" update=":contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:GestionActividad" 
+                                                             style="font-family: Arial;font-size: 13px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listActividGest)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="TipActivid" value="#{MBAdministacion.listActividGest}" selectionMode="single" id="TipActividadTable" style="font-family: Arial;font-size: 12px;" 
+                                                         rowKey="#{TipActivid.codActividad}" selection="#{MBAdministacion.admActidiGest}"  widgetVar="TipActividad" 
+                                                         emptyMessage="No se encontraron registros">
+
+                                                <p:column headerText="Numero" filterBy="#{TipActivid.codActividad}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{TipActivid.codActividad}"/>
+                                                </p:column>
+                                                <p:column headerText="Nombre"  filterBy="#{TipActivid.nombreActividad}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{TipActivid.nombreActividad}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton
+                                                    update=":contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:GestionActividad,:contenedorGeneral:Contenedor:growl_General" 
+                                                    icon="ui-icon-check" value="Modificar" action="#{MBAdministacion.abrirInfodialog(10)}" style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                </table>                             
+
+
+                            </p:panel>
+                        </p:outputPanel>
+
+                        <!-- Datatable que carga todoslos recordatorios -->
+                        <p:outputPanel id="InfRecordat">
+                            <p:panel style="font-size: 12px;border: none;" rendered="#{MBAdministacion.estadoRadioSeleccionActiviYRecord == 'GesRecordat'}" >
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                             
+                                        <td>
+                                            <p:commandButton value="Crear un nuevo recordatorio" icon="ui-icon-arrowthick-1-e" action="#{MBAdministacion.abrirInfodialogRegistro(11)}" update=":contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:GestionRecordat"
+                                                             style="font-family: Arial;font-size: 13px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listRecordaGest)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="TipRecordator" value="#{MBAdministacion.listRecordaGest}"  id="TipRecordatorTable" style="font-family: Arial;font-size: 12px;" rowKey="#{TipRecordator.codRecordatorio}" 
+                                                         selection="#{MBAdministacion.admRecordatGest}"  widgetVar="TipoRecordat"  selectionMode="single"
+                                                         emptyMessage="No se encontraron registros">
+
+                                                <p:column headerText="Numero"  filterBy="#{TipRecordator.codRecordatorio}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{TipRecordator.codRecordatorio}" />
+                                                </p:column>
+                                                <p:column headerText="Nombre"  filterBy="#{TipRecordator.nombreRecordatorio}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{TipRecordator.nombreRecordatorio}" />
+                                                </p:column>                                      
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton update=":contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:GestionRecordat,
+                                                                 :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-check" value="Modificar"  action="#{MBAdministacion.abrirInfodialog(11)}"
+                                                                 style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </p:panel>
+                        </p:outputPanel>
+                    </td>
+                </tr>
+            </table>
+
+            <!--DIALOGS DE Registro / modificacion -->
+
+            <!-- Para Crear/modificar un tipo de predio -->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="GestionActividad">
+                <p:dialog header="#{MBAdministacion.tituloDialogActividad}" widgetVar="DlgActividad"  height="auto" width="500" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Tipo *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>
+                                    <h:panelGrid columns="2" style="margin-bottom:8px;font-family: Arial;font-size: 12px;" >
+                                        <p:selectOneRadio id="TipoRecAct" value="#{MBAdministacion.tipoAct}">
+                                            <f:selectItem itemLabel="Avaluo" itemValue="Avaluo" />
+                                            <f:selectItem itemLabel="Cartera" itemValue="Cartera" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Nombre: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td><p:inputText id="txt_nombre" value="#{MBAdministacion.nombreActividad}" placeholder="Nombre"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;"  onkeypress="return validarLetrasyNumeros(event)"/></td>
+                            </tr>       
+                        </table>
+                        <br/>                     
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogActividad=='Registrar nueva actividad'}" >
+                                        <td> <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBAdministacion.regisActivid()}"   style="font-family: Arial;font-size: 13px;" 
+                                                               update=":contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:InfAcciones,                                                             
+                                                               :contenedorGeneral:Contenedor:growl_General"/></td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiActivida()}" value="Modificar" 
+                                                             update=":contenedorGeneral:Contenedor:growl_General,
+                                                             :contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:InfAcciones"  style="font-family: Arial;font-size: 13px;"/> </td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>  
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+            <!--Crear/modificar una tipo de maquinaria-->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="GestionRecordat">
+                <p:dialog header="#{MBAdministacion.tituloDialogRecordat}" widgetVar="DlgRecordator"  height="auto" width="500" showEffect="fade" hideEffect="fade">
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Tipo *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>
+                                    <h:panelGrid columns="2" style="margin-bottom:8px;font-family: Arial;font-size: 12px;" >
+                                        <p:selectOneRadio id="TipoRecord" value="#{MBAdministacion.tipoRecord}">
+                                            <f:selectItem itemLabel="Avaluo" itemValue="Avaluo" />
+                                            <f:selectItem itemLabel="Cartera" itemValue="Cartera" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Nombre: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td><p:inputText id="txt_nombre_record" value="#{MBAdministacion.nombreRecordatori}" placeholder="Nombre"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;"  onkeypress="return validarLetrasyNumeros(event)"/></td>
+                            </tr>                          
+                        </table>
+                        <br/>                     
+                        <table>
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogRecordat == 'Registrar nuevo recordatorio'}" >
+                                        <td> <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBAdministacion.regisRecordator()}"   style="font-family: Arial;font-size: 13px;" 
+                                                               update=":contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:InfRecordat,                                                        
+                                                               :contenedorGeneral:Contenedor:growl_General"/></td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><p:commandButton icon="ui-icon-disk" action="#{MBAdministacion.modifiRecordator()}" value="Modificar" 
+                                                             update=":contenedorGeneral:Contenedor:growl_General,
+                                                             :contenedorGeneral:Contenedor:FrmGestionAccionesRecordat:InfRecordat"  style="font-family: Arial;font-size: 13px;"/> </td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+        </h:form>
+    </h:body>
+</html>
+

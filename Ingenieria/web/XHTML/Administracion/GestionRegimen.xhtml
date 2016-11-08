@@ -1,0 +1,234 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Regimen</title>
+    </h:head> 
+    <h:body>
+        <h:form id="formRegimen">
+
+            <table>
+                <tr>
+                    <td><big><big><b><p class="Title">Gestión de regimen</p></b></big></big></td>
+                </tr>
+                <tr>
+                    <td colspan="10"> <p:separator /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:panel style="border: none;">
+                            <b><p:outputLabel value="Seleccione la opción a ver y/o modificar " style="font-family:Arial;font-size: 13px;"/></b>
+                            <br/>
+                            <br/>
+                            <p:selectOneRadio id="rigimen" value="#{MBAdministacion.selecRegimennn}" style="font-family:Arial;font-size: 12px;">
+                                <f:selectItem itemLabel="Gestión de regimen" itemValue="Regimen" />
+                                <f:selectItem itemLabel="Gestion de tipo de regimen" itemValue="Tipo_Regimen" />
+                                <p:ajax event="change" listener="#{MBAdministacion.seleccionRegimen()}" 
+                                        update="
+                                        :contenedorGeneral:Contenedor:formRegimen:InfRegimen,
+                                        :contenedorGeneral:Contenedor:formRegimen:InfTipoRegimen"/>
+                            </p:selectOneRadio>
+                        </p:panel>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:outputPanel id="InfRegimen" >
+                            <p:panel rendered="#{MBAdministacion.panelregimen}" style="border: none;">
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                               
+                                        <td>
+                                            <p:commandButton value="Crear nuevo regimen" icon="ui-icon-arrowthick-1-e" 
+                                                             update=":contenedorGeneral:Contenedor:formRegimen:DialogRegimen" action="#{MBAdministacion.abrirInfodialogRegistro(6)}" style="font-family: Arial;font-size: 13px;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listRegimen)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="regi" value="#{MBAdministacion.listRegimen}"  rows="50" id="regimenTable" style="font-family: Arial;font-size: 12px;" 
+                                                         selectionMode="single" widgetVar="Regimen" selection="#{MBAdministacion.admRegimen}" rowKey="#{regi.codRegimen}" >
+
+                                                <p:column headerText="Nombre" filterBy="#{regi.nombreRegimen}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{regi.nombreRegimen}" />
+                                                </p:column>
+                                                <p:column headerText="Descripcion" filterBy="#{regi.descripcionRegimen}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{regi.descripcionRegimen}"/>
+                                                </p:column>                     
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton style="font-family: Arial;font-size: 13px;" 
+                                                                 update=":contenedorGeneral:Contenedor:formRegimen:DialogRegimen,
+                                                                 :contenedorGeneral:Contenedor:growl_General"  value="Modificar" icon="ui-icon-check" action="#{MBAdministacion.abrirInfodialog(6)}"/>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+
+                            </p:panel>
+                        </p:outputPanel>
+
+                        <p:outputPanel id="InfTipoRegimen">
+                            <p:panel rendered="#{MBAdministacion.paneltiporegimen}" style="border: none;">
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                           
+                                        <td>
+                                            <p:commandButton value="Crear nuevo tipo de regimen" action="#{MBAdministacion.abrirInfodialogRegistro(7)}"
+                                                             style="font-family: Arial;font-size: 13px;" update=":contenedorGeneral:Contenedor:formRegimen:DialogTipRegimen,
+                                                             :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-arrowthick-1-e"  />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listTipoRegimen)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="tiporegi" value="#{MBAdministacion.listTipoRegimen}"  rows="50" id="tiporegimenTable" style="font-family: Arial;font-size: 12px;" 
+                                                         selectionMode="single" widgetVar="TipoRegimen" selection="#{MBAdministacion.admTipRegimen}" rowKey="#{tiporegi.codTipoRegimen}">
+
+                                                <p:column headerText="Nombre" filterBy="#{tiporegi.nombreTipoRegimen}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{tiporegi.nombreTipoRegimen}" />
+                                                </p:column>
+                                                <p:column headerText="Estado" filterBy="#{tiporegi.estadoTipoRegimen}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{tiporegi.estadoTipoRegimen}"/>
+                                                </p:column>
+                                                <p:column headerText="Regimen" filterBy="#{tiporegi.nombreFKRegimen}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{tiporegi.nombreFKRegimen}"/>
+                                                </p:column>                   
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton 
+                                                    update=":contenedorGeneral:Contenedor:formRegimen:DialogTipRegimen,
+                                                    :contenedorGeneral:Contenedor:growl_General"  value="Modificar" action="#{MBAdministacion.abrirInfodialog(7)}" 
+                                                    style="font-family: Arial;font-size: 13px;"  icon="ui-icon-check"/>
+                                            </center>
+                                            
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+
+                            </p:panel>
+                        </p:outputPanel>
+                    </td>
+                </tr>
+            </table>
+
+            <p:outputPanel id="DialogRegimen" style="font-family: Arial;font-size: 12px;">
+                <p:dialog header="#{MBAdministacion.tituloDialogRegimen}" widgetVar="DlgRegimen" modal="false" height="auto" width="600" showEffect="fade" hideEffect="fade">
+
+                    <br/>
+                    <center>
+                        <table  cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td> <p:outputLabel value="Nombre:* "  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>  <p:inputText id="Nom1"  value="#{MBAdministacion.nombreTable}"  pt:placeholder="Nombre" style="font-family: Arial;font-size: 12px;text-transform: uppercase;" onkeypress="return validarLetras(event)"/></td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel value="Descripción :* "  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>  <p:inputTextarea id="Des1" value="#{MBAdministacion.desTable}"  pt:placeholder="Descripción (max 500 caracteres)" style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" /></td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table border="0">
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogRegimen == 'Registrar nuevo regimen'}">
+                                        <center><p:commandButton  icon="ui-icon-check" action="#{MBAdministacion.regisRegimen()}" value="Guardar"  style="font-family: Arial;font-size: 13px;"  
+                                                                  update=":contenedorGeneral:Contenedor:growl_General,
+                                                                  :contenedorGeneral:Contenedor:formRegimen:InfRegimen" id="BTN1"/> </center>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <center><p:commandButton icon="ui-icon-check" action="#{MBAdministacion.modifiRegimen()}"  style="font-family: Arial;font-size: 13px;"  value="Modificar" 
+                                                                     update=":contenedorGeneral:Contenedor:growl_General,
+                                                                     :contenedorGeneral:Contenedor:formRegimen:InfRegimen" id="BTN2"/> </center>  </td>
+                                    </c:otherwise>
+                                </c:choose>                              
+                            </tr>
+                        </table>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+            <p:outputPanel id="DialogTipRegimen">
+                <p:dialog header="#{MBAdministacion.tituloDialogTipRegimen}" widgetVar="DialogTipoRegimen" modal="false" height="auto" width="auto" showEffect="fade" hideEffect="fade" > 
+                    <br/>
+                    <center>
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel value="Nombre: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td> <p:inputText id="tRagiTipoNom" value="#{MBAdministacion.nombreTipoRegimen}" pt:placeholder="Nombre"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;"  onkeypress="return validarLetras(event)"/></td>
+                            </tr>
+                            <tr>
+                                <td> <p:outputLabel value="Estado *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td><p:selectOneMenu  id="tEstadoTipoRegimen" style="width: 213px;font-size: 14px;" effect="fade" value="#{MBAdministacion.estadoTipoRegimen}">
+                                        <f:selectItem  itemValue="" itemLabel="--Seleccione--" />
+                                        <f:selectItem  itemValue="Habilitado" itemLabel="Habilitado" />
+                                        <f:selectItem  itemValue="Deshabilitado" itemLabel="Deshabilitado" />
+                                    </p:selectOneMenu></td>
+                            </tr>
+                            <tr>
+                                <td>  <p:outputLabel value="Regimen *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td>  <p:selectOneMenu  id="tRegim" style="width: 213px;font-size: 13px;" effect="fade" value="#{MBAdministacion.codRegimen}">
+                                        <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                        <f:selectItems  value="#{MBPerito.cargRegPer}" />
+                                    </p:selectOneMenu> </td>
+                            </tr>
+                        </table>
+                        <br/>         
+                        <table border="0">
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBAdministacion.tituloDialogTipRegimen == 'Registrar nuevo tipo de regimen'}">
+                                        <td>
+                                            <center><p:commandButton  icon="ui-icon-check" action="#{MBAdministacion.registipoRegimen()}" value="Guardar"  style="font-family: Arial;font-size: 13px;"  
+                                                                      update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:formRegimen:InfTipoRegimen"/> </center>
+                                        </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td>
+                                            <center><p:commandButton  icon="ui-icon-check" action="#{MBAdministacion.modificartiporegimen()}" value="Modificar"  style="font-family: Arial;font-size: 13px;"  
+                                                                      update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:formRegimen:InfTipoRegimen" id="tBTN1"/> </center>
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
+
+
+                            </tr>
+                        </table>
+                    </center>
+                </p:dialog>
+            </p:outputPanel>
+
+
+        </h:form>
+    </h:body>
+</html>

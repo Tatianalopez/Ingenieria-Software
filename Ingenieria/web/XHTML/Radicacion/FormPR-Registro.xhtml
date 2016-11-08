@@ -1,0 +1,1491 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+    </h:head>
+    <h:body> 
+        <h:form id="FRegistro">
+            <br/>
+            <table border="0" cellspacing="4" cellpadding="4">
+                <tr>
+                    <td><big><big><b><p class="Title">Registro de solicitud</p></b></big></big></td>
+                </tr>
+
+                <tr>
+                    <td colspan="10" style="width: 1200px"> <p:separator /></td>
+                </tr>
+                <tr>
+                    <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                </tr>
+            </table>
+
+            <br/>
+            <table border="0" cellspacing="3" cellpadding="3">
+                <tr>
+                    <td>
+                        <center>
+                            <table border="0" cellspacing="3" cellpadding="3">
+                                <tr> 
+                                    <td colspan="1" style="width: 100px">
+                                        <p:outputLabel for="FecSol" value="Fecha de solicitud:* " style="font-family: Arial;font-size: 12px;" />
+                                    </td>
+                                    <td colspan="1">
+                                        <p:calendar id="FecSol"  pattern="yyyy-MM-dd" mask="true" locale="es" value="#{MBPreRadicacion.fechaSol}" pt:placeholder="AAAA/MM/DD"  style="font-family:Arial;font-size: 12px;"
+                                                    mindate="1995-01-01" maxdate="#{MBPreRadicacion.fecha_actual}">                             
+                                        </p:calendar>
+                                    </td>
+                                    <td colspan="1" style="width: 100px">
+                                        <p:outputLabel for="Horasoli" value="Hora de solicitud:* " style="font-family: Arial;font-size: 12px;" />
+                                    </td>
+                                    <td colspan="1">
+                                        <p:calendar id="Horasoli" pattern="HH:mm" timeOnly="true" locale="es" value="#{MBPreRadicacion.horaSol}" style="font-family:Arial;font-size: 12px;" pt:placeholder="HH:mm"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="width: 100px">
+                                        <p:outputLabel for="combo1" value="Producto entidad:* " style="font-family: Arial;font-size: 12px;"/>
+                                    </td>
+                                    <td colspan="1">
+                                        <p:selectOneMenu  style="width:200px;font-size: 12px;" value="#{MBAdministacion.adm.codProEnt}" id="combo1">
+                                            <p:ajax listener="#{MBAdministacion.onTipProEnt()}" update="TipProEnti"/>
+                                            <f:selectItem id="PrEnt" itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                            <f:selectItems id="SelItemTDoc" value="#{MBAdministacion.proEnt}"/>
+                                        </p:selectOneMenu> 
+                                    </td>
+                                    <td colspan="1" style="width: 100px">
+                                        <p:outputLabel for="TipProEnti" value="Tipo de producto entidad:* " style="font-family: Arial;font-size: 12px;" />
+                                    </td>
+                                    <td colspan="1">
+                                        <p:selectOneMenu  id="TipProEnti" style="width:200px;font-size: 12px;" value="#{MBAdministacion.adm.codTipProEnt}">
+                                            <f:selectItem id="TPEnt" itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                            <f:selectItems id="SelItem"  value="#{MBAdministacion.tipProEnt}" />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="width: 100px">
+                                        <p:outputLabel for="SoliPor" value="Remitido por:* "  style="font-family: Arial;font-size: 12px;"/>
+                                    </td>
+                                    <td colspan="1">
+                                        <p:selectOneMenu id="SoliPor"  style="width:200px;font-size: 12px;" value="#{MBPreRadicacion.preRad.solicitante}" >
+                                            <f:selectItem itemLabel="--Seleccione--" itemValue="" noSelectionOption="true" />
+                                            <p:ajax listener="#{MBPreRadicacion.validarsolicitado()}" 
+                                                    update="InfoClientesGeneral,InfoEntidad,Panelradiocliente,PanelradioEntidad,Chk_requiereEntidad"/>
+                                            <f:selectItem itemLabel="Entidad" itemValue="Entidad" />
+                                            <f:selectItem itemLabel="Cliente" itemValue="Cliente"  />
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <h:outputText value="¿Producto entidad requiere una entidad?" style="font-size: 12px;font-family: Arial;" />
+                                        <p:spacer height="5"/>
+                                        <p:selectBooleanCheckbox value="#{MBPreRadicacion.requiereEntidad}" id="Chk_requiereEntidad">
+                                            <p:ajax listener="#{MBPreRadicacion.validarsolicitado()}" 
+                                                    update="InfoEntidad,PanelradioEntidad"/>
+                                        </p:selectBooleanCheckbox>
+                                    </td>
+                                    <td colspan="2">
+                                        <h:outputText value="¿La solicitud proviene de una cotización?" style="font-size: 12px;font-family: Arial;" />
+                                        <p:spacer height="5"/>
+                                        <p:selectBooleanCheckbox value="#{MBPreRadicacion.cotizacion}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <h:outputText value="¿Indicar ubicación del avalúo?" style="font-size: 12px;font-family: Arial;" />
+                                        <p:spacer height="5"/>
+                                        <p:selectBooleanCheckbox value="#{MBPreRadicacion.requiereUbicacion}" id="CheckIndicaUbicaAvalReg">
+                                            <p:ajax listener="#{MBPreRadicacion.validarUbicacion()}" update="PNLUbica" event="change" />
+                                        </p:selectBooleanCheckbox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <table border="0" cellspacing="3" cellpadding="3">
+                                            <tr>
+                                                <td>
+                                                    <p:outputPanel id="PNLUbica">
+                                                        <c:choose>
+                                                            <c:when test="#{MBPreRadicacion.requiereUbicacion==true}">
+                                                                <table style="font-family: Arial; font-size: 12px;">
+                                                                    <tr>
+                                                                        <td> <p:outputLabel for="DeptoSolic" value="Departamento:* " style="font-family: Arial;font-size: 12px;" rendered="#{MBPreRadicacion.ubicacion}" /></td>
+                                                                        <td> <p:selectOneMenu  id="DeptoSolic" style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAvaluo.codDeptoSol}" filter="true"  rendered="#{MBPreRadicacion.ubicacion}" filterMatchMode="contains">
+                                                                                <p:ajax listener="#{MBAvaluo.onCiudad(1)}" update="CiudadesSolici,:contenedorGeneral:Contenedor:growl_General"/>
+                                                                                <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                                                                <f:selectItems  value="#{MBUbicacion.cargaDep}"/>
+                                                                            </p:selectOneMenu></td>
+                                                                        <td><p:outputLabel for="CiudadesSolici" value="Ciudad:* " style="font-family: Arial;font-size: 12px;" rendered="#{MBPreRadicacion.ubicacion}"/></td>
+                                                                        <td><p:selectOneMenu id="CiudadesSolici" style="width: 210px;font-size: 12px;" filter="true" effect="fade" value="#{MBAvaluo.codCiudadSol}"  rendered="#{MBPreRadicacion.ubicacion}" filterMatchMode="contains">
+                                                                                <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                                                                <f:selectItems  value="#{MBAvaluo.cargaCiuSolic}" />
+                                                                            </p:selectOneMenu> </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </c:when>
+                                                        </c:choose>
+                                                    </p:outputPanel>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:separator />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <center>
+                            <p:outputPanel id="Panelradiocliente">
+
+                                <b> <p:outputLabel for="RBTCli" value="¿Ingresar información del cliente(s)?" style="font-family: Arial;font-size: 13px;" rendered="#{MBCliente.estadoPanelRadiosCli}"/></b>
+                                <br/>
+                                <p:selectOneRadio id="RBTCli" value="#{MBCliente.opcionMostrarCliSolicitante}" rendered="#{MBCliente.estadoPanelRadiosCli}"  style="font-family: Arial;font-size: 12px;border: none;">
+                                    <f:selectItem itemLabel="Si" itemValue="Si" />
+                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                    <p:ajax event="change" id="ajaxCliente"
+                                            update="InfoClientesGeneral,
+                                            :contenedorGeneral:Contenedor:growl_General" listener="#{MBPreRadicacion.cargarPaneles(1)}"/>
+                                </p:selectOneRadio>
+                            </p:outputPanel>
+                        </center>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <center>
+                            <p:outputPanel id="InfoClientesGeneral">
+                                <p:panel rendered="#{MBCliente.estadoPanelClienteGeneral}" style="font-family: Arial;font-size: 13px;border: none;">
+                                    <!--<b><p class="Texto" align="left">» Informacion Persona Solicitante:</p></b>-->
+                                    <h:panelGrid>
+                                        <p:outputPanel id="InfCliente">
+                                            <center>
+                                                <table border="0" cellspacing="2" cellpadding="2">                                                    
+                                                    <tbody>
+                                                        <!-- elementos de la fila 1 -->
+                                                        <tr>
+                                                            <td colspan="20">
+                                                                <b><p:outputLabel value="» Información persona solicitante:" style="font-size: 16px;font-family: Arial;" /></b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="10">
+                                                                <p:separator/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>                                                        
+                                                            <td>
+                                                                <center>
+                                                                    <table border="0" cellspacing="3" cellpadding="3">
+                                                                        <tr>
+                                                                            <td>
+                                                                                <h:outputText value="Facturar" style="font-size: 12px;font-family: Arial;" />
+                                                                                <p:spacer height="25"/>
+                                                                                <p:selectBooleanCheckbox value="#{MBCliente.clientFact1}" >
+                                                                                    <p:ajax listener="#{MBPreRadicacion.validarfuncionario(1)}"
+                                                                                            update="PanelFuncionario1"/>
+                                                                                </p:selectBooleanCheckbox>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <p:outputPanel id="PanelFuncionario1">
+                                                                                    <h:outputText value="Funcionario" style="font-size: 12px;font-family: Arial;" rendered="#{MBPreRadicacion.estadoFuncionario1}"/>
+                                                                                    <p:spacer height="5" rendered="#{MBPreRadicacion.estadoFuncionario1}"/>
+                                                                                    <p:selectBooleanCheckbox value="#{MBCliente.funcionario1}" rendered="#{MBPreRadicacion.estadoFuncionario1}"/>
+                                                                                </p:outputPanel>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </center>
+                                                            </td>
+                                                            <td>
+                                                                <p:inputText id="IdCl_1" title="Numero Documento" value="#{MBCliente.numeroDoccliente1}" maxlength="12"  placeholder="N° de documento:*" style="font-family:Arial;font-size: 12px;text-transform: uppercase;" onkeypress="return validarSoloNumeros(event)" disabled="#{MBCliente.fila1}"/>
+                                                                <p:tooltip id="Tip1_1" for="IdCl_1" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                            </td>
+                                                            <td>
+                                                                <p:inputText id="NomCl_1" title="Nombre Completo" value="#{MBCliente.nombreCliente1}"  placeholder="Nombre completo:*" style="font-family:Arial;font-size: 12px;width:280px;text-transform: uppercase;" onkeypress="return validarLetras(event)" disabled="#{MBCliente.fila1}"/>
+                                                                <p:tooltip id="Tip2_1" for="NomCl_1" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                            </td>                                                        
+                                                            <td>
+                                                                <p:inputText id="TelCl_1" title="Telefono" value="#{MBCliente.telefonoCliente1}"  placeholder="Telefono / celular:*" style="font-family:Arial;font-size: 12px;text-transform: uppercase;"  onkeypress="return validarLetrasyNumeros(event)" disabled="#{MBCliente.fila1}"/>
+                                                                <p:tooltip id="tollTelCl_1" for="TelCl_1" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                            </td>
+                                                            <td colspan="6">
+
+                                                                <p:commandButton id="btn_editar1" icon="ui-icon-pencil" style="width: 22px;" action="#{MBPreRadicacion.editar_cajas(1,1)}" rendered="#{MBCliente.editar1}" styleClass="buttonC" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General"/>
+                                                                <p:tooltip for="btn_editar1" value="Editar Valores" id="ed1" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                <p:commandButton id="btn_agregar_otro1" icon="ui-icon-plusthick" style="width: 22px;" action="#{MBPreRadicacion.agregarCajas(1,'Registro')}" rendered="#{MBCliente.otro1}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC" />
+                                                                <p:tooltip for="btn_agregar_otro1" value="Agregar otro" id="t1" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                <p:commandButton id="btn_Quitar_otro1" icon="ui-icon-trash" style="width: 22px;" action="#{MBPreRadicacion.quitarCajas(1)}" rendered="#{MBCliente.quitar1}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC" />
+                                                                <p:tooltip for="btn_Quitar_otro1" value="Limpiar" id="q1" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                            </td>
+                                                        </tr>
+                                                        <!-- elementos de la fila 2 -->
+                                                        <c:choose>
+                                                            <c:when test="#{MBCliente.estadocajasAgregarF1}">
+                                                                <tr>
+                                                                    <td colspan="10">
+                                                                        <p:separator rendered="#{MBCliente.estadocajasAgregarF1}"/>
+                                                                    </td>
+                                                                </tr>
+                                                            </c:when>
+
+                                                        </c:choose>
+
+                                                        <c:choose>
+                                                            <c:when test="#{MBCliente.estadocajasAgregarF1}">
+                                                                <tr>
+                                                                    <td>
+                                                                        <center>
+                                                                            <table border="0" cellspacing="3" cellpadding="3">
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <h:outputText value="Facturar "  rendered="#{MBCliente.estadocajasAgregarF1}" style="font-size: 12px;font-family: Arial;"/>
+                                                                                        <p:spacer height="25" rendered="#{MBCliente.estadocajasAgregarF1}"/>
+                                                                                        <p:selectBooleanCheckbox value="#{MBCliente.clientFact2}"  rendered="#{MBCliente.estadocajasAgregarF1}">
+                                                                                            <p:ajax listener="#{MBPreRadicacion.validarfuncionario(2)}"
+                                                                                                    update="PanelFuncionario2"/>
+                                                                                        </p:selectBooleanCheckbox>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <p:outputPanel id="PanelFuncionario2">
+                                                                                            <h:outputText value="Funcionario "  rendered="#{MBPreRadicacion.estadoFuncionario2}" style="font-size: 12px;font-family: Arial;"/>
+                                                                                            <p:spacer height="5" rendered="#{MBPreRadicacion.estadoFuncionario2}"/>
+                                                                                            <p:selectBooleanCheckbox value="#{MBCliente.funcionario2}"  rendered="#{MBPreRadicacion.estadoFuncionario2}"/>
+                                                                                        </p:outputPanel>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </center>
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="IdCl_2" title="Numero Documento" value="#{MBCliente.numeroDoccliente2}"  maxlength="12" style="font-size: 12px;font-family: Arial;text-transform: uppercase;"  rendered="#{MBCliente.estadocajasAgregarF1}" placeholder="N° de documento:*" onkeypress="return validarSoloNumeros(event)" disabled="#{MBCliente.fila2}"/>
+                                                                        <p:tooltip id="Tip1_2" for="IdCl_2" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="NomCl_2" title="Nombre Completo" value="#{MBCliente.nombreCliente2}" style="font-size: 12px;font-family: Arial;width:280px;text-transform: uppercase;"   rendered="#{MBCliente.estadocajasAgregarF1}" placeholder="Nombre completo:*" onkeypress="return validarLetras(event)" disabled="#{MBCliente.fila2}"/>
+                                                                        <p:tooltip id="Tip2_2" for="NomCl_2" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>                                                        
+                                                                    <td>
+                                                                        <p:inputText id="TelCl_2" title="Telefono" value="#{MBCliente.telefonoCliente2}"  style="font-size: 12px;font-family: Arial;text-transform: uppercase;"  placeholder="Telefono / celular:*" rendered="#{MBCliente.estadocajasAgregarF1}" onkeypress="return validarLetrasyNumeros(event)" disabled="#{MBCliente.fila2}"/>
+                                                                        <p:tooltip id="tollTelCl_2" for="TelCl_2" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>
+                                                                    <td colspan="6">
+
+                                                                        <p:commandButton id="btn_editar2" icon="ui-icon-pencil" style="width: 22px;" action="#{MBPreRadicacion.editar_cajas(2,1)}" rendered="#{MBCliente.editar2}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC"/>
+                                                                        <p:tooltip for="btn_editar2" value="Editar Valores" id="ed2" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                        <p:commandButton id="btn_agregar_otro2" icon="ui-icon-plusthick" style="width: 22px;" action="#{MBPreRadicacion.agregarCajas(2,'Registro')}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" rendered="#{MBCliente.otro2}" styleClass="buttonC" />
+                                                                        <p:tooltip for="btn_agregar_otro2" value="Agregar otro" id="t2" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                        <p:commandButton id="btn_Quitar_otro2" icon="ui-icon-minusthick" style="width: 22px;" action="#{MBPreRadicacion.quitarCajas(2)}"  update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC" rendered="#{MBCliente.quitar2}" />
+                                                                        <p:tooltip for="btn_Quitar_otro2" value="Eliminar fila" id="q2" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                    </td>
+                                                                </tr>
+                                                            </c:when>
+
+                                                        </c:choose>
+
+
+                                                        <!-- elementos de la fila 3 -->
+                                                        <c:choose>
+                                                            <c:when test="#{MBCliente.estadocajasAgregarF2}">
+                                                                <tr>
+                                                                    <td colspan="10">
+                                                                        <p:separator rendered="#{MBCliente.estadocajasAgregarF2}"/>
+                                                                    </td>
+                                                                </tr>
+                                                            </c:when>
+
+                                                        </c:choose>
+
+                                                        <c:choose>
+                                                            <c:when test="#{MBCliente.estadocajasAgregarF2}">
+                                                                <tr>
+                                                                    <td>
+                                                                        <center>
+                                                                            <table border="0">
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <h:outputText value="Facturar"  rendered="#{MBCliente.estadocajasAgregarF2}" style="font-size: 13px;font-family: Arial;"/>
+                                                                                        <p:spacer height="25" rendered="#{MBCliente.estadocajasAgregarF2}"/>
+                                                                                        <p:selectBooleanCheckbox value="#{MBCliente.clientFact3}"  rendered="#{MBCliente.estadocajasAgregarF2}">
+                                                                                            <p:ajax listener="#{MBPreRadicacion.validarfuncionario(3)}"
+                                                                                                    update="PanelFuncionario3"/>
+                                                                                        </p:selectBooleanCheckbox>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <p:outputPanel id="PanelFuncionario3">
+                                                                                            <h:outputText value="Funcionario"  rendered="#{MBPreRadicacion.estadoFuncionario3}" style="font-size: 13px;font-family: Arial;"/>
+                                                                                            <p:spacer height="5" rendered="#{MBPreRadicacion.estadoFuncionario3}"/>
+                                                                                            <p:selectBooleanCheckbox value="#{MBCliente.funcionario3}"  rendered="#{MBPreRadicacion.estadoFuncionario3}">
+                                                                                                <p:ajax listener="#{MBPreRadicacion.validarfuncionario(3)}"
+                                                                                                        update="PanelFuncionario3"/>
+                                                                                            </p:selectBooleanCheckbox>
+                                                                                        </p:outputPanel>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </center>
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="IdCl_3" title="Numero Documento" value="#{MBCliente.numeroDoccliente3}"  maxlength="12" style="font-size: 12px;font-family: Arial;text-transform: uppercase;" rendered="#{MBCliente.estadocajasAgregarF2}" placeholder="N° de documento:*" onkeypress="return validarSoloNumeros(event)" disabled="#{MBCliente.fila3}"/>
+                                                                        <p:tooltip id="Tip1_3" for="IdCl_3" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="NomCl_3" title="Nombre Completo" value="#{MBCliente.nombreCliente3}" style="width:280px;font-size: 12px;font-family: Arial;text-transform: uppercase;"  rendered="#{MBCliente.estadocajasAgregarF2}" placeholder="Nombre completo:*" onkeypress="return validarLetras(event)" disabled="#{MBCliente.fila3}"/>
+                                                                        <p:tooltip id="Tip2_3" for="NomCl_3" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>                                                       
+                                                                    <td>
+                                                                        <p:inputText id="TelCl_3" title="Telefono" value="#{MBCliente.telefonoCliente3}"  style="font-size: 12px;font-family: Arial;text-transform: uppercase;" rendered="#{MBCliente.estadocajasAgregarF2}" placeholder="Telefono / celular:*" onkeypress="return validarLetrasyNumeros(event)" disabled="#{MBCliente.fila3}"/>
+                                                                        <p:tooltip id="tollTelCl_3" for="TelCl_3" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>
+                                                                    <td colspan="6">
+                                                                        <p:commandButton id="btn_editar3" icon="ui-icon-pencil" style="width: 22px;" action="#{MBPreRadicacion.editar_cajas(3,1)}" rendered="#{MBCliente.editar3}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC"/>
+                                                                        <p:tooltip for="btn_editar3" value="Editar Valores" id="ed3" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                        <p:commandButton id="btn_agregar_otro3" icon="ui-icon-plusthick" style="width: 22px;" action="#{MBPreRadicacion.agregarCajas(3,'Registro')}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" rendered="#{MBCliente.otro3}" styleClass="buttonC" />
+                                                                        <p:tooltip for="btn_agregar_otro3" value="Agregar otro" id="t3" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                        <p:commandButton id="btn_Quitar_otro3" icon="ui-icon-minusthick" style="width: 22px;" action="#{MBPreRadicacion.quitarCajas(3)}"  update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC" rendered="#{MBCliente.quitar3}" />
+                                                                        <p:tooltip for="btn_Quitar_otro3" value="Eliminar fila" id="tool3" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                    </td>
+                                                                </tr>
+                                                            </c:when>
+
+                                                        </c:choose>
+
+
+                                                        <!-- elementos de la fila 4 -->
+                                                        <c:choose>
+                                                            <c:when test="#{MBCliente.estadocajasAgregarF3}">
+                                                                <tr> 
+                                                                    <!-- elementos de la fila 3 -->
+                                                                    <td colspan="10">
+                                                                        <p:separator rendered="#{MBCliente.estadocajasAgregarF3}"/>
+                                                                    </td>
+                                                                </tr>                                              
+                                                                <tr>
+                                                                    <td>
+                                                                        <center>
+                                                                            <table>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <h:outputText value="Facturar "  rendered="#{MBCliente.estadocajasAgregarF3}" style="font-size: 13px;font-family: Arial;"/>
+                                                                                        <p:spacer height="25" rendered="#{MBCliente.estadocajasAgregarF3}"/>
+                                                                                        <p:selectBooleanCheckbox value="#{MBCliente.clientFact4}"  rendered="#{MBCliente.estadocajasAgregarF3}">
+                                                                                            <p:ajax listener="#{MBPreRadicacion.validarfuncionario(4)}"
+                                                                                                    update="PanelFuncionario4"/>
+                                                                                        </p:selectBooleanCheckbox>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <p:outputPanel id="PanelFuncionario4">
+                                                                                            <h:outputText value="Funcionario "  rendered="#{MBPreRadicacion.estadoFuncionario4}" style="font-size: 13px;font-family: Arial;"/>
+                                                                                            <p:spacer height="5" rendered="#{MBPreRadicacion.estadoFuncionario4}"/>
+                                                                                            <p:selectBooleanCheckbox value="#{MBCliente.funcionario4}"  rendered="#{MBPreRadicacion.estadoFuncionario4}"/>
+                                                                                        </p:outputPanel>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </center>
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="IdCl_4" title="Numero Documento" value="#{MBCliente.numeroDoccliente4}" maxlength="12" style="font-size: 12px;font-family: Arial;text-transform: uppercase;" rendered="#{MBCliente.estadocajasAgregarF3}" placeholder="N° de documento:*" onkeypress="return validarSoloNumeros(event)" disabled="#{MBCliente.fila4}"/>
+                                                                        <p:tooltip id="Tip1_4" for="IdCl_4" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="NomCl_4" title="Nombre Completo" value="#{MBCliente.nombreCliente4}"  style="font-size: 12px;font-family: Arial;width:280px;text-transform: uppercase;"  rendered="#{MBCliente.estadocajasAgregarF3}" placeholder="Nombre completo:*" onkeypress="return validarLetras(event)" disabled="#{MBCliente.fila4}"/>
+                                                                        <p:tooltip id="Tip2_4" for="NomCl_4" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>                                                        
+                                                                    <td>
+                                                                        <p:inputText id="TelCl_4" title="Telefono" value="#{MBCliente.telefonoCliente4}"  style="font-size: 12px;font-family: Arial;text-transform: uppercase;" rendered="#{MBCliente.estadocajasAgregarF3}" placeholder="Telefono / celular:*" onkeypress="return validarLetrasyNumeros(event)" disabled="#{MBCliente.fila4}"/>
+                                                                        <p:tooltip id="tollTelCl_4" for="TelCl_4" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>
+                                                                    <td colspan="6">
+                                                                        <p:commandButton id="btn_editar4" icon="ui-icon-pencil" style="width: 22px;" action="#{MBPreRadicacion.editar_cajas(4,1)}" rendered="#{MBCliente.editar4}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC"/>
+                                                                        <p:tooltip for="btn_editar4" value="Editar Valores" id="ed4" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+
+                                                                        <p:commandButton id="btn_agregar_otro4" icon="ui-icon-plusthick" style="width: 22px;" action="#{MBPreRadicacion.agregarCajas(4,'Registro')}" rendered="#{MBCliente.otro4}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC" />
+                                                                        <p:tooltip for="btn_agregar_otro4" value="Agregar otro" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                        <p:commandButton id="btn_Quitar_otro4" icon="ui-icon-minusthick" style="width: 22px;" action="#{MBPreRadicacion.quitarCajas(4)}" rendered="#{MBCliente.quitar4}"  update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC" />
+                                                                        <p:tooltip for="btn_Quitar_otro4" value="Eliminar fila"  showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                    </td>
+                                                                </tr>
+                                                            </c:when>
+
+                                                        </c:choose>
+
+                                                        <!-- elementos de la fila 5-->
+                                                        <c:choose>
+                                                            <c:when test="#{MBCliente.estadocajasAgregarF4}">
+                                                                <tr>
+                                                                    <td colspan="10">
+                                                                        <p:separator rendered="#{MBCliente.estadocajasAgregarF4}"/>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <center>
+                                                                            <table>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <h:outputText value="Facturar" rendered="#{MBCliente.estadocajasAgregarF4}" style="font-size: 13px;font-family: Arial;"/>
+                                                                                        <p:spacer height="25" rendered="#{MBCliente.estadocajasAgregarF4}"/>
+                                                                                        <p:selectBooleanCheckbox value="#{MBCliente.clientFact5}" rendered="#{MBCliente.estadocajasAgregarF4}">
+                                                                                            <p:ajax listener="#{MBPreRadicacion.validarfuncionario(5)}"
+                                                                                                    update="PanelFuncionario5"/>
+                                                                                        </p:selectBooleanCheckbox>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <p:outputPanel id="PanelFuncionario5">
+                                                                                            <h:outputText value="Funcionario" rendered="#{MBPreRadicacion.estadoFuncionario5}" style="font-size: 13px;font-family: Arial;"/>
+                                                                                            <p:spacer height="5" rendered="#{MBPreRadicacion.estadoFuncionario5}"/>
+                                                                                            <p:selectBooleanCheckbox value="#{MBCliente.funcionario5}" rendered="#{MBPreRadicacion.estadoFuncionario5}"/>
+                                                                                        </p:outputPanel>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </center>
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="IdCl_5" title="Numero Documento" value="#{MBCliente.numeroDoccliente5}"  maxlength="12" style="font-size: 12px;font-family: Arial;text-transform: uppercase;" rendered="#{MBCliente.estadocajasAgregarF4}" placeholder="N° de documento:*" onkeypress="return validarSoloNumeros(event)" disabled="#{MBCliente.fila5}"/>
+                                                                        <p:tooltip id="Tip1_5" for="IdCl_5" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <p:inputText id="NomCl_5" title="Nombre Completo" value="#{MBCliente.nombreCliente5}" style="width:280px;font-size: 12px;font-family: Arial;text-transform: uppercase;"  rendered="#{MBCliente.estadocajasAgregarF4}" placeholder="Nombre completo:*" onkeypress="return validarLetras(event)" disabled="#{MBCliente.fila5}"/>
+                                                                        <p:tooltip id="Tip2_5" for="NomCl_5" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>                                                        
+                                                                    <td>
+                                                                        <p:inputText id="TelCl_5" title="Telefono" value="#{MBCliente.telefonoCliente5}" rendered="#{MBCliente.estadocajasAgregarF4}" style="font-size: 12px;font-family: Arial;text-transform: uppercase;" placeholder="Telefono / celular:*" onkeypress="return validarLetrasyNumeros(event)" disabled="#{MBCliente.fila5}"/>
+                                                                        <p:tooltip id="tollTelCl_5" for="TelCl_5" showEffect="clip" style="font-size: 12px;font-family: Arial;"/>
+                                                                    </td>
+                                                                    <td colspan="6">
+                                                                        <p:commandButton id="btn_editar5" icon="ui-icon-pencil" style="width: 22px;" action="#{MBPreRadicacion.editar_cajas(5,1)}" rendered="#{MBCliente.editar5}" update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC"/>
+                                                                        <p:tooltip for="btn_editar5" value="Editar Valores" id="ed5" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+
+                                                                        <p:commandButton id="btn_Quitar_otro5" icon="ui-icon-minusthick" style="width: 22px;" action="#{MBPreRadicacion.quitarCajas(5)}" rendered="#{MBCliente.quitar5}"  update=":contenedorGeneral:Contenedor:FRegistro:InfCliente,:contenedorGeneral:Contenedor:growl_General" styleClass="buttonC" />
+                                                                        <p:tooltip for="btn_Quitar_otro5" value="Eliminar fila" id="q5" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                                    </td>
+                                                                </tr>
+                                                            </c:when>
+
+                                                        </c:choose>
+
+                                                    </tbody>
+                                                </table>
+                                            </center>
+                                        </p:outputPanel>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </p:outputPanel>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <center>
+                            <p:outputPanel id="PanelradioEntidad">
+                                <b><p:outputLabel for="RBTEnt" value="¿Ingresar información de entidad(es)?" style="font-family: Arial;font-size: 13px;" rendered="#{MBEntidad.opcionRadiosMostrarEntidad}"/> </b>
+                                <br/>
+                                <p:selectOneRadio id="RBTEnt" value="#{MBEntidad.opcionMostrarEntidad}" rendered="#{MBEntidad.opcionRadiosMostrarEntidad}" style="font-family: Arial;font-size: 12px;">
+                                    <f:selectItem itemLabel="Si" itemValue="Si1" />
+                                    <f:selectItem itemLabel="No" itemValue="No1" />
+                                    <p:ajax event="change" id="ajaxEntidad" 
+                                            update="InfoEntidad,:contenedorGeneral:Contenedor:growl_General" listener="#{MBPreRadicacion.cargarPaneles(2)}" />
+                                </p:selectOneRadio>
+                            </p:outputPanel>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <center>
+                            <p:outputPanel id="InfoEntidad">
+                                <p:panel rendered="#{MBEntidad.estPanelEntidad}"  style="font-family: Arial;font-size: 13px;border: none;">
+                                    <table border="0" cellspacing="3" cellpadding="3">
+                                        <!-- entidades de la fila 1-->
+                                        <tr>
+                                            <td colspan="15">
+                                                <b><p:outputLabel value="» Información de entidades:" style="font-size: 16px;font-family: Arial;" /></b>
+                                            </td>
+                                        </tr>
+                                        <!-- separador de la fila 1-->
+                                        <tr>
+                                            <td colspan="10" style="float: right;">
+                                                <p:commandButton  value="Registrar y/o modificar entidad" action="#{MBPreRadicacion.abrirDialogEntidades(1)}"
+                                                                  style="font-family: Arial;font-size: 13px;float: right;" ajax="true"
+                                                                  update="CmbSucursalRadic1,CmbAsesorRadic1,:contenedorGeneral:Contenedor:growl_General,FrmGestionEnti,InfoEntidad"  icon="ui-icon-arrowthick-1-e" />                                          
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="15">
+                                                <p:separator/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h:outputText value="Facturar" style="font-size: 12px;font-family: Arial;"/>
+                                                <p:spacer height="5"/>
+                                                <p:selectBooleanCheckbox value="#{MBEntidad.entidadFact1}" />
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu  id="CmbEntidadRadic1" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codEntidad1}" disabled="#{MBEntidad.deshabilitarAsesor1}">
+                                                    <p:ajax listener="#{MBEntidad.onSucursalRadic(1)}" update="CmbSucursalRadic1,CmbAsesorRadic1,:contenedorGeneral:Contenedor:growl_General" />
+                                                    <f:selectItem  itemValue="0" itemLabel="--Seleccione Entidad--"  noSelectionOption="true"/>
+                                                    <f:selectItems  value="#{MBEntidad.cargaEnt1}" />
+                                                </p:selectOneMenu> 
+                                                <p:tooltip  for="CmbEntidadRadic1" showEffect="clip" value="Seleccione Entidad: *" style="font-size: 12px;font-family: Arial;" />
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu id="CmbSucursalRadic1" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codSucursal1}" filter="true" disabled="#{MBEntidad.deshabilitarAsesor1}">
+                                                    <p:ajax listener="#{MBEntidad.onAsesorRadic(1)}" update="CmbAsesorRadic1,CmbSucursalRadic1,CmbEntidadRadic1,:contenedorGeneral:Contenedor:growl_General"/>
+                                                    <f:selectItem  itemValue="0" itemLabel="--Seleccione Sucursal--" noSelectionOption="true"/>
+                                                    <f:selectItems  value="#{MBEntidad.cargaSucur1}" />
+                                                </p:selectOneMenu> 
+                                                <p:tooltip  for="CmbSucursalRadic1" showEffect="clip"  value="Seleccione Sucursal: *" style="font-size: 12px;font-family: Arial;" />
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu id="CmbAsesorRadic1" style="width: 185px;font-size: 12px;" filter="true" effect="fade" value="#{MBEntidad.codAsesor1}" disabled="#{MBEntidad.deshabilitarAsesor1}">
+                                                    <p:ajax listener="#{MBEntidad.InfoAsesor(1)}" 
+                                                            update="CmbAsesorRadic1,CmbSucursalRadic1,CmbEntidadRadic1,InfoAsesor1,                                                            
+                                                            :contenedorGeneral:Contenedor:growl_General"/>
+                                                    <f:selectItem  itemValue="0" itemLabel="--Seleccione Asesor--" noSelectionOption="true"/>
+                                                    <f:selectItems  value="#{MBEntidad.cargaAses1}" />
+                                                </p:selectOneMenu> 
+                                                <p:tooltip  for="CmbAsesorRadic1" showEffect="clip" value="Seleccione Asesor: *" style=" font-size: 12px;font-family: Arial;" />
+                                            </td>
+                                            <td colspan="5">
+
+                                                <p:commandButton id="btn_editarEntidades1" icon="ui-icon-pencil" style="width: 22px;" action="#{MBEntidad.editarEntidades(1)}" rendered="#{MBEntidad.editarFila1}" styleClass="buttonC" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                <p:tooltip for="btn_editarEntidades1" value="Editar Valores" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                <p:commandButton id="btn_AceptarEntidad1" icon="ui-icon-check" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.aceptarEntidades(1)}" rendered="#{MBEntidad.aceptarFila1}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                <p:tooltip for="btn_AceptarEntidad1" value="Aceptar" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                <p:commandButton id="btn_agregar_entodad1" icon="ui-icon-plusthick" style="width: 22px;"  styleClass="buttonC" rendered="#{MBEntidad.agregarFila1}"   action="#{MBEntidad.agregarCamposEntidad(1)}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                <p:tooltip for="btn_agregar_entodad1" value="Agregar otra" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                <p:commandButton id="btn_Quitar_Entidad1" icon="ui-icon-trash" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.QuitarEntidades(1)}" rendered="#{MBEntidad.quitarFila1}"  update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                <p:tooltip for="btn_Quitar_Entidad1" value="Eliminar fila" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                <p:commandButton id="btn_Info_Asesor1" icon="ui-icon-folder-open" style="width: 22px;" action="#{MBEntidad.VerInfoAsesor(1)}" styleClass="buttonC"  rendered="#{MBEntidad.estadoInfoAsesor1}" update=":DialogInfoAsesor:dialodinfoasesor,:contenedorGeneral:Contenedor:growl_General"/>
+                                                <p:tooltip for="btn_Info_Asesor1" value="Ver Informacion del Asesor" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                            </td>
+                                            <td colspan="1">
+                                                <p:outputPanel id="InfoAsesor1">
+                                                    <p:panel rendered="#{MBEntidad.estadoInfoAsesor1}">
+                                                        <table border="0">
+                                                            <tr>
+                                                                <td>
+                                                                    <b><p:outputLabel value="Correo Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                        
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td >                                                                                           
+                                                                    <p:outputLabel value="#{MBEntidad.mailAsesor1}"  style="font-family: Arial;font-size: 12px;" />
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <b><p:outputLabel value="Telefono Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                         
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>                                                                                       
+                                                                    <p:outputLabel value="#{MBEntidad.telefonoAsesor1}"  style="font-family: Arial;font-size: 12px;" /> 
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </p:panel>
+                                                </p:outputPanel>
+                                            </td>
+                                        </tr>
+                                        <!-- entidades de la fila 2-->
+                                        <c:choose>
+                                            <c:when test="#{MBEntidad.estadoAgregarFilasEntidad2}">
+                                                <tr>
+                                                    <td colspan="10">
+                                                        <p:separator rendered="#{MBEntidad.estadoAgregarFilasEntidad2}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h:outputText value="Facturar" style="font-size: 12px;font-family: Arial;" rendered="#{MBEntidad.estadoAgregarFilasEntidad2}"/>
+                                                        <p:spacer height="5" rendered="#{MBEntidad.estadoAgregarFilasEntidad2}"/>
+                                                        <p:selectBooleanCheckbox value="#{MBEntidad.entidadFact2}" rendered="#{MBEntidad.estadoAgregarFilasEntidad2}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu  id="CmbEntidadRadic2" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codEntidad2}" rendered="#{MBEntidad.estadoAgregarFilasEntidad2}" disabled="#{MBEntidad.deshabilitarAsesor2}">
+                                                            <p:ajax listener="#{MBEntidad.onSucursalRadic(2)}" update="CmbSucursalRadic2,CmbAsesorRadic2,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Entidad--" noSelectionOption="true" />
+                                                            <f:selectItems  value="#{MBEntidad.cargaEnt2}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbEntidadRadic2" showEffect="clip"  value="Seleccione Entidad: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbSucursalRadic2" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codSucursal2}"  rendered="#{MBEntidad.estadoAgregarFilasEntidad2}" filter="true" disabled="#{MBEntidad.deshabilitarAsesor2}">
+                                                            <p:ajax listener="#{MBEntidad.onAsesorRadic(2)}" update="CmbAsesorRadic2,CmbSucursalRadic2,CmbEntidadRadic2,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Sucursal--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaSucur2}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbSucursalRadic2" showEffect="clip" value="Seleccione Sucursal: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>                
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbAsesorRadic2" style="width: 185px;font-size: 12px;" filter="true" effect="fade" value="#{MBEntidad.codAsesor2}" rendered="#{MBEntidad.estadoAgregarFilasEntidad2}" disabled="#{MBEntidad.deshabilitarAsesor2}">
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Asesor--" noSelectionOption="true"/>
+                                                            <p:ajax listener="#{MBEntidad.InfoAsesor(2)}" 
+                                                                    update="CmbAsesorRadic2,CmbSucursalRadic2,CmbEntidadRadic2,InfoAsesor2,                                                                    
+                                                                    :contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaAses2}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbAsesorRadic2" showEffect="clip" value="Seleccione Acesor: *"  style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td colspan="5">
+                                                        <p:commandButton id="btn_editarEntidades2" icon="ui-icon-pencil" style="width: 22px;"  styleClass="buttonC" action="#{MBEntidad.editarEntidades(2)}" rendered="#{MBEntidad.editarFila2}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_editarEntidades2" value="Editar Valores" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_AceptarEntidad2" icon="ui-icon-check" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.aceptarEntidades(2)}"  rendered="#{MBEntidad.aceptarFila2}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_AceptarEntidad2" value="Aceptar" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_agregar_entodad2" icon="ui-icon-plusthick" style="width: 22px;" styleClass="buttonC" rendered="#{MBEntidad.agregarFila2}" action="#{MBEntidad.agregarCamposEntidad(2)}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_agregar_entodad2" value="Agregar otra" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Quitar_Entidad2" icon="ui-icon-minusthick" style="width: 22px;" action="#{MBEntidad.QuitarEntidades(2)}"  styleClass="buttonC" rendered="#{MBEntidad.quitarFila2}"  update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Quitar_Entidad2" value="Eliminar fila" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Info_Asesor2" icon="ui-icon-folder-open" style="width: 22px;" action="#{MBEntidad.VerInfoAsesor(2)}" styleClass="buttonC" rendered="#{MBEntidad.estadoInfoAsesor2}" update=":DialogInfoAsesor:dialodinfoasesor,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Info_Asesor2" value="Ver Informacion del Asesor" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                    </td>
+                                                    <td>
+                                                        <p:outputPanel id="InfoAsesor2">
+                                                            <p:panel rendered="#{MBEntidad.estadoInfoAsesor2}">
+                                                                <table border="0">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Correo Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                        
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td >                                                                                           
+                                                                            <p:outputLabel value="#{MBEntidad.mailAsesor2}"  style="font-family: Arial;font-size: 12px;" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Telefono Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                         
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>                                                                                       
+                                                                            <p:outputLabel value="#{MBEntidad.telefonoAsesor2}"  style="font-family: Arial;font-size: 12px;" /> 
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </p:panel>
+                                                        </p:outputPanel>
+                                                    </td>
+                                                </tr>
+                                            </c:when>
+
+                                        </c:choose>
+
+                                        <!-- entidades de la fila 3-->
+                                        <c:choose>
+                                            <c:when test="#{MBEntidad.estadoAgregarFilasEntidad3}">
+                                                <tr>
+                                                    <td colspan="10">
+                                                        <p:separator rendered="#{MBEntidad.estadoAgregarFilasEntidad3}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h:outputText value="Facturar" style="font-size: 12px;font-family: Arial;" rendered="#{MBEntidad.estadoAgregarFilasEntidad3}"/>
+                                                        <p:spacer height="5" rendered="#{MBEntidad.estadoAgregarFilasEntidad3}"/>
+                                                        <p:selectBooleanCheckbox value="#{MBEntidad.entidadFact3}" rendered="#{MBEntidad.estadoAgregarFilasEntidad3}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu  id="CmbEntidadRadic3" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codEntidad3}" rendered="#{MBEntidad.estadoAgregarFilasEntidad3}" disabled="#{MBEntidad.deshabilitarAsesor3}">
+                                                            <p:ajax listener="#{MBEntidad.onSucursalRadic(3)}" update="CmbSucursalRadic3,CmbAsesorRadic3,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Entidad--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaEnt3}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbEntidadRadic3" showEffect="clip"  value="Seleccione Entidad: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbSucursalRadic3"   style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codSucursal3}" rendered="#{MBEntidad.estadoAgregarFilasEntidad3}" filter="true" disabled="#{MBEntidad.deshabilitarAsesor3}">
+                                                            <p:ajax listener="#{MBEntidad.onAsesorRadic(3)}" update="CmbAsesorRadic3,CmbSucursalRadic3,CmbEntidadRadic3,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Sucursal--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaSucur3}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbSucursalRadic3" showEffect="clip" value="Seleccione Sucursal: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbAsesorRadic3" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codAsesor3}" rendered="#{MBEntidad.estadoAgregarFilasEntidad3}" disabled="#{MBEntidad.deshabilitarAsesor3}">
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Asesor--" noSelectionOption="true"/>
+                                                            <p:ajax listener="#{MBEntidad.InfoAsesor(3)}" 
+                                                                    update="CmbAsesorRadic3,CmbSucursalRadic3,CmbEntidadRadic3,InfoAsesor3,                                                                    
+                                                                    :contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaAses3}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbAsesorRadic3" showEffect="clip" value="Seleccione Acesor: *"  style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td colspan="5">
+                                                        <p:commandButton id="btn_editarEntidades3" icon="ui-icon-pencil" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.editarEntidades(3)}" rendered="#{MBEntidad.editarFila3}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_editarEntidades3" value="Editar Valores" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_AceptarEntidad3" icon="ui-icon-check" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.aceptarEntidades(3)}"  rendered="#{MBEntidad.aceptarFila3}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_AceptarEntidad3" value="Aceptar" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_agregar_entodad3" icon="ui-icon-plusthick" style="width: 22px;" styleClass="buttonC" rendered="#{MBEntidad.agregarFila3}" action="#{MBEntidad.agregarCamposEntidad(3)}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_agregar_entodad3" value="Agregar otra" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Quitar_Entidad3" icon="ui-icon-minusthick" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.QuitarEntidades(3)}" rendered="#{MBEntidad.quitarFila3}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Quitar_Entidad3" value="Eliminar fila" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Info_Asesor3" icon="ui-icon-folder-open" style="width: 22px;" action="#{MBEntidad.VerInfoAsesor(3)}" styleClass="buttonC" rendered="#{MBEntidad.estadoInfoAsesor3}" update=":DialogInfoAsesor:dialodinfoasesor,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Info_Asesor3" value="Ver Informacion del Asesor" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                    </td>
+                                                    <td>
+                                                        <p:outputPanel id="InfoAsesor3">
+                                                            <p:panel rendered="#{MBEntidad.estadoInfoAsesor3}">
+                                                                <table border="0">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Correo Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                        
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td >                                                                                           
+                                                                            <p:outputLabel value="#{MBEntidad.mailAsesor3}"  style="font-family: Arial;font-size: 12px;" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Telefono Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                         
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>                                                                                       
+                                                                            <p:outputLabel value="#{MBEntidad.telefonoAsesor3}"  style="font-family: Arial;font-size: 12px;" /> 
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </p:panel>
+                                                        </p:outputPanel>
+                                                    </td>
+                                                </tr>
+                                            </c:when>
+                                        </c:choose>
+                                        <!-- entidades de la fila 4-->
+                                        <c:choose>
+                                            <c:when test="#{MBEntidad.estadoAgregarFilasEntidad4}">
+                                                <tr>
+                                                    <td colspan="10">
+                                                        <p:separator rendered="#{MBEntidad.estadoAgregarFilasEntidad4}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h:outputText value="Facturar" style="font-size: 12px;font-family: Arial;" rendered="#{MBEntidad.estadoAgregarFilasEntidad4}"/>
+                                                        <p:spacer height="5" rendered="#{MBEntidad.estadoAgregarFilasEntidad4}"/>
+                                                        <p:selectBooleanCheckbox value="#{MBEntidad.entidadFact4}" rendered="#{MBEntidad.estadoAgregarFilasEntidad4}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu  id="CmbEntidadRadic4" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codEntidad4}" rendered="#{MBEntidad.estadoAgregarFilasEntidad4}" disabled="#{MBEntidad.deshabilitarAsesor4}">
+                                                            <p:ajax listener="#{MBEntidad.onSucursalRadic(4)}" update="CmbSucursalRadic4,CmbAsesorRadic4,CmbEntidadRadic4,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Entidad--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaEnt4}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbEntidadRadic4" showEffect="clip"  value="Seleccione Entidad: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbSucursalRadic4" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codSucursal4}" rendered="#{MBEntidad.estadoAgregarFilasEntidad4}" filter="true" disabled="#{MBEntidad.deshabilitarAsesor4}">
+                                                            <p:ajax listener="#{MBEntidad.onAsesorRadic(4)}" update="CmbAsesorRadic4,CmbSucursalRadic4,CmbEntidadRadic4,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Sucursal--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaSucur4}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbSucursalRadic4" showEffect="clip" value="Seleccione Sucursal: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbAsesorRadic4" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codAsesor4}" rendered="#{MBEntidad.estadoAgregarFilasEntidad4}" disabled="#{MBEntidad.deshabilitarAsesor4}">
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Asesor--" noSelectionOption="true"/>
+                                                            <p:ajax listener="#{MBEntidad.InfoAsesor(4)}" 
+                                                                    update="CmbAsesorRadic4,CmbSucursalRadic4,CmbEntidadRadic4,InfoAsesor4,
+                                                                    :contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaAses4}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbAsesorRadic4" showEffect="clip" value="Seleccione Acesor: *"  style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td colspan="5">
+                                                        <p:commandButton id="btn_editarEntidades4" icon="ui-icon-pencil" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.editarEntidades(4)}" rendered="#{MBEntidad.editarFila4}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_editarEntidades4" value="Editar Valores" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_AceptarEntidad4" icon="ui-icon-check" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.aceptarEntidades(4)}"  rendered="#{MBEntidad.aceptarFila4}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_AceptarEntidad4" value="Aceptar" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_agregar_entodad4" icon="ui-icon-plusthick" style="width: 22px;" styleClass="buttonC" rendered="#{MBEntidad.agregarFila4}"  action="#{MBEntidad.agregarCamposEntidad(4)}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_agregar_entodad4" value="Agregar otra" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Quitar_Entidad4" icon="ui-icon-minusthick" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.QuitarEntidades(4)}" rendered="#{MBEntidad.quitarFila4}"  update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Quitar_Entidad4" value="Eliminar fila" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Info_Asesor4" icon="ui-icon-folder-open" style="width: 22px;" action="#{MBEntidad.VerInfoAsesor(4)}" styleClass="buttonC" rendered="#{MBEntidad.estadoInfoAsesor4}" update=":DialogInfoAsesor:dialodinfoasesor,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Info_Asesor4" value="Ver Informacion del Asesor" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:outputPanel id="InfoAsesor4">
+                                                            <p:panel rendered="#{MBEntidad.estadoInfoAsesor4}">
+                                                                <table border="0">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Correo Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                        
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td >                                                                                           
+                                                                            <p:outputLabel value="#{MBEntidad.mailAsesor4}"  style="font-family: Arial;font-size: 12px;" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Telefono Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                         
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>                                                                                       
+                                                                            <p:outputLabel value="#{MBEntidad.telefonoAsesor4}"  style="font-family: Arial;font-size: 12px;" /> 
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </p:panel>
+                                                        </p:outputPanel>
+                                                    </td>
+                                                </tr>
+                                            </c:when>
+                                        </c:choose>
+                                        <!-- entidades de la fila 5-->
+                                        <c:choose>
+                                            <c:when test="#{MBEntidad.estadoAgregarFilasEntidad5}">
+                                                <tr>
+                                                    <td colspan="10">
+                                                        <p:separator rendered="#{MBEntidad.estadoAgregarFilasEntidad5}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h:outputText value="Facturar" style="font-size: 12px;font-family: Arial;" rendered="#{MBEntidad.estadoAgregarFilasEntidad5}"/>
+                                                        <p:spacer height="5" rendered="#{MBEntidad.estadoAgregarFilasEntidad5}"/>
+                                                        <p:selectBooleanCheckbox value="#{MBEntidad.entidadFact5}"  rendered="#{MBEntidad.estadoAgregarFilasEntidad5}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu  id="CmbEntidadRadic5" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codEntidad5}" rendered="#{MBEntidad.estadoAgregarFilasEntidad5}" disabled="#{MBEntidad.deshabilitarAsesor5}">
+                                                            <p:ajax listener="#{MBEntidad.onSucursalRadic(5)}" update="CmbSucursalRadic5,CmbAsesorRadic5,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Entidad--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaEnt5}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbEntidadRadic5" showEffect="clip"  value="Seleccione Entidad: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbSucursalRadic5" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codSucursal5}" rendered="#{MBEntidad.estadoAgregarFilasEntidad5}" disabled="#{MBEntidad.deshabilitarAsesor5}">
+                                                            <p:ajax listener="#{MBEntidad.onAsesorRadic(5)}" update="CmbAsesorRadic5,CmbSucursalRadic5,CmbEntidadRadic5,:contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Sucursal--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaSucur5}" />
+                                                        </p:selectOneMenu>
+                                                        <p:tooltip  for="CmbSucursalRadic5" showEffect="clip" value="Seleccione Sucursal: *" style="font-size: 12px;font-family: Arial;" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="CmbAsesorRadic5" filter="true" style="width: 185px;font-size: 12px;" effect="fade" value="#{MBEntidad.codAsesor5}" rendered="#{MBEntidad.estadoAgregarFilasEntidad5}" disabled="#{MBEntidad.deshabilitarAsesor5}">
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione Asesor--" noSelectionOption="true"/>
+                                                            <p:ajax listener="#{MBEntidad.InfoAsesor(5)}" 
+                                                                    update="CmbAsesorRadic5,CmbSucursalRadic5,CmbEntidadRadic5,InfoAsesor5,                                                                   
+                                                                    :contenedorGeneral:Contenedor:growl_General"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaAses5}" />
+                                                        </p:selectOneMenu> 
+                                                        <p:tooltip  for="CmbAsesorRadic5" showEffect="clip" value="Seleccione Acesor: *"  style="font-size: 12px;font-family: Arial;" />
+                                                    </td>  
+                                                    <td colspan="5">
+                                                        <p:commandButton id="btn_editarEntidades5" icon="ui-icon-pencil" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.editarEntidades(5)}" rendered="#{MBEntidad.editarFila5}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_editarEntidades5" value="Editar Valores" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_AceptarEntidad5" icon="ui-icon-check" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.aceptarEntidades(5)}"  rendered="#{MBEntidad.aceptarFila5}" update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_AceptarEntidad5" value="Aceptar" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Quitar_Entidad5" icon="ui-icon-minusthick" style="width: 22px;" styleClass="buttonC" action="#{MBEntidad.QuitarEntidades(5)}" rendered="#{MBEntidad.quitarFila5}"   update=":contenedorGeneral:Contenedor:FRegistro:InfoEntidad,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Quitar_Entidad5" value="Eliminar fila" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                        <p:commandButton id="btn_Info_Asesor5" icon="ui-icon-folder-open" style="width: 22px;" action="#{MBEntidad.VerInfoAsesor(5)}" styleClass="buttonC" rendered="#{MBEntidad.estadoInfoAsesor5}" update=":DialogInfoAsesor:dialodinfoasesor,:contenedorGeneral:Contenedor:growl_General"/>
+                                                        <p:tooltip for="btn_Info_Asesor5" value="Ver Informacion del Asesor" showEffect="clip" style="font-size: 12px;font-family: Arial;" />
+
+                                                    </td>
+                                                    <td>
+                                                        <p:outputPanel id="InfoAsesor5">
+                                                            <p:panel rendered="#{MBEntidad.estadoInfoAsesor5}">
+                                                                <table border="0">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Correo Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                        
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td >                                                                                           
+                                                                            <p:outputLabel value="#{MBEntidad.mailAsesor5}"  style="font-family: Arial;font-size: 12px;" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <b><p:outputLabel value="Telefono Asesor: " style="font-family: Arial;font-size: 12px;"/></b>                                                                                         
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>                                                                                       
+                                                                            <p:outputLabel value="#{MBEntidad.telefonoAsesor5}"  style="font-family: Arial;font-size: 12px;" /> 
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </p:panel>
+                                                        </p:outputPanel>
+                                                    </td>
+                                                </tr>
+                                            </c:when>
+
+                                        </c:choose>
+
+                                    </table>
+                                </p:panel>
+                            </p:outputPanel>
+
+
+                            <p:outputPanel id="FrmGestionEnti">
+                                <p:dialog widgetVar="DlgRegistrarOModifEntidadDesdeRegistro" header="Gestión de entidades, sucursales, asesores" id="DlgEntidades" width="800"  height="550" showEffect="fade" hideEffect="fade" closable="true">
+                                    <!-- Radios para mostrar ya sea el panel de entidades, sucursales o asesores ok--> 
+                                    <p:panel style="border: none;">
+                                        <b><p:outputLabel value="Seleccione la opción a ver y/o modificar " style="font-family:Arial;font-size: 13px;"/></b>
+                                        <br/>
+                                        <br/>
+                                        <p:selectOneRadio id="RBTubi" value="#{MBEntidad.estadoRadioSeleccion}" style="font-family:Arial;font-size: 12px;">
+                                            <f:selectItem itemLabel="Gestión de entidades" itemValue="Entidades" />
+                                            <f:selectItem itemLabel="Gestión de sucursales" itemValue="Sucursales" />
+                                            <f:selectItem itemLabel="Gestión de asesores" itemValue="Asesores" />
+                                            <p:ajax event="change" update="
+                                                    InfEntidad,
+                                                    InfSucursal,
+                                                    InfAsesor" listener="#{MBEntidad.visiblePanel()}"/>
+                                        </p:selectOneRadio>
+                                    </p:panel>
+                                    <!-- Tablas de de entidades, sucursales o asesores ok--> 
+
+                                    <!-- Datatable que carga todos las entidades -->
+                                    <p:outputPanel id="InfEntidad">
+
+                                        <p:panel rendered="#{MBEntidad.estPanelEntidad}" style="border: none;">
+                                            <table>
+                                                <tr>                             
+                                                    <td>
+                                                        <p:commandButton value="Crear una nueva entidad" icon="ui-icon-arrowthick-1-e"  action="#{MBEntidad.abrirDialogRegistrar(1)}" update="RegistroEntidad" 
+                                                                         style="font-family: Arial;font-size: 13px;"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                            <p:dataTable var="Entidad" value="#{MBEntidad.cargaEntTodo}" selectionMode="single" id="EntidadTable" style="font-family: Arial;font-size: 12px;" rows="50"
+                                                         rowKey="#{Entidad.codEntidad}" selection="#{MBEntidad.entEnt}"  widgetVar="Entidad" scrollable="true" scrollHeight="250"
+                                                         emptyMessage="No se encontraron entidades">
+
+                                                <p:column headerText="Numero" filterBy="#{Entidad.documentoEntidad}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{Entidad.documentoEntidad}"/>
+                                                </p:column>
+                                                <p:column headerText="Nombre"  filterBy="#{Entidad.nombreEntidad}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{Entidad.nombreEntidad}" />
+                                                </p:column>
+                                                <p:column headerText="Regimen"  filterBy="#{Entidad.nombreRegimen} - #{Entidad.nombreTipoRegim}" style="font-family:Arial;font-size: 12px;">
+                                                    <h:outputText value="#{Entidad.nombreRegimen} - #{Entidad.nombreTipoRegim}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton
+                                                    update="RegistroEntidad,:contenedorGeneral:Contenedor:growl_General" 
+                                                    icon="ui-icon-check" value="Modificar" action="#{MBEntidad.validarDatatable(1)}" style="font-family: Arial;font-size: 13px;"/>
+
+                                                <p:commandButton
+                                                    update=":contenedorGeneral:Contenedor:growl_General,DlgEntidades" ajax="true"
+                                                    icon="ui-icon-check" value="Cerrar" action="#{MBEntidad.validarDatatable(5)}" style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+
+                                        </p:panel>
+                                    </p:outputPanel>
+
+                                    <!-- Datatable que carga todas la sucursales -->
+                                    <p:outputPanel id="InfSucursal">
+                                        <p:panel style="font-size: 12px;border: none;" rendered="#{MBEntidad.estPanelSucursal}" >
+                                            <table>
+                                                <tr>
+                                                    <td> <h:outputText value="Seleccione la entidad:*"  style="font-family: Arial;font-size: 13px;"/></td>
+                                                    <td> <p:selectOneMenu id="EntidadAsesor2" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.fk_entidadAsesor}" filter="true">                                
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione--"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaEnt}" />
+                                                            <p:ajax listener="#{MBEntidad.ConsultInfo('Sucursal')}" update="InfSucursal"/>
+                                                        </p:selectOneMenu></td>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                            <table>
+                                                <tr>                             
+                                                    <td>
+                                                        <p:commandButton value="Crear una nueva sucursal" icon="ui-icon-arrowthick-1-e" action="#{MBEntidad.abrirDialogRegistrar(2)}" update="RegistroSucursal"
+                                                                         style="font-family: Arial;font-size: 13px;"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                            <p:dataTable var="Sucursal" value="#{MBEntidad.cargaSucurTodo}"  id="SucursalTable" style="font-family: Arial;font-size: 12px;" rowKey="#{Sucursal.codSucursal}" 
+                                                         selection="#{MBEntidad.entsucu}"  widgetVar="Sucursal" scrollable="true" scrollHeight="250" selectionMode="single"
+                                                         emptyMessage="No se encontraron sucursales">
+
+                                                <p:column headerText="Entidad"  filterBy="#{Sucursal.nombreEntidadSucursal}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.nombreEntidadSucursal}" />
+                                                </p:column>
+                                                <p:column headerText="Nombre"  filterBy="#{Sucursal.nombreOfic}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.nombreOfic}" />
+                                                </p:column>
+                                                <p:column headerText="Telefono"  filterBy="#{Sucursal.telefonoOfic}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.telefonoOfic}" />
+                                                </p:column>
+                                                <p:column headerText="Dirección"  filterBy="#{Sucursal.direccionOfic}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.direccionOfic}" />
+                                                </p:column>
+                                                <p:column headerText="Departamento"  filterBy="#{Sucursal.nombreDeptoSucursal}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.nombreDeptoSucursal}" />
+                                                </p:column>
+                                                <p:column headerText="Ciudad"  filterBy="#{Sucursal.nombreCiudadSucursal}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.nombreCiudadSucursal}" />
+                                                </p:column>
+                                                <p:column headerText="Codigo oficina"  filterBy="#{Sucursal.codOfic}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Sucursal.codOfic}" />
+                                                </p:column>                      
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton update="RegistroSucursal,
+                                                                 :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-check" value="Modificar" action="#{MBEntidad.validarDatatable(2)}" 
+                                                                 style="font-family: Arial;font-size: 13px;"/>
+                                                <p:commandButton
+                                                    update=":contenedorGeneral:Contenedor:growl_General,DlgEntidades" 
+                                                    icon="ui-icon-check" value="Cerrar" action="#{MBEntidad.validarDatatable(5)}" style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+                                        </p:panel>
+                                    </p:outputPanel>
+
+                                    <!-- Datatable que carga todos los asesores -->
+                                    <p:outputPanel id="InfAsesor">
+                                        <p:panel style="font-size: 12px;border: none;" rendered="#{MBEntidad.estPanelAsesor}">
+                                            <table>
+                                                <tr>
+                                                    <td> <h:outputText value="Seleccione la entidad:*"  style="font-family: Arial;font-size: 13px;"/></td>
+                                                    <td> <p:selectOneMenu id="EntidadAsesor1" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.fk_entidadAsesor}" filter="true">                                
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione--"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaEnt}" />
+                                                            <p:ajax listener="#{MBEntidad.ConsultInfo('Asesor')}" update="InfAsesor"/>
+                                                        </p:selectOneMenu></td>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                            <table>
+                                                <tr>                            
+                                                    <td>
+                                                        <p:commandButton value="Crear un asesor" icon="ui-icon-arrowthick-1-e" action="#{MBEntidad.abrirDialogRegistrar(3)}" update="RegistroAsesor" 
+                                                                         style="font-family: Arial;font-size: 13px;"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                            <p:dataTable var="Asesor" value="#{MBEntidad.cargaAsesTodo}"  id="AsesorTable" style="font-family: Arial;font-size: 12px;" rowKey="#{Asesor.codAsesor}" 
+                                                         selection="#{MBEntidad.entAse}"  widgetVar="Asesor" selectionMode="single" scrollable="true" scrollHeight="250" emptyMessage="No se encontraron asesores">
+
+                                                <p:column headerText="Entidad" filterBy="#{Asesor.nombreEntidadAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreEntidadAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Sucursal" filterBy="#{Asesor.nombreSucursalAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreSucursalAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Nombre" filterBy="#{Asesor.nombreAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Cargo" filterBy="#{Asesor.cargoAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.cargoAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Mail" filterBy="#{Asesor.mailAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.mailAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Telefono" filterBy="#{Asesor.telefonoAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.telefonoAsesor}" />
+                                                </p:column>
+                                                <p:column headerText="Estado" filterBy="#{Asesor.nombreEstadoAsesor}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{Asesor.nombreEstadoAsesor}" />
+                                                </p:column>                           
+
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton update="RegistroAsesor,:contenedorGeneral:Contenedor:growl_General" 
+                                                                 icon="ui-icon-check" value="Modificar"  action="#{MBEntidad.validarDatatable(3)}" 
+                                                                 style="font-family: Arial;font-size: 13px;"/>
+                                                <p:commandButton
+                                                    update=":contenedorGeneral:Contenedor:growl_General,DlgEntidades" 
+                                                    icon="ui-icon-check" value="Cerrar" action="#{MBEntidad.validarDatatable(5)}" style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                            <br/>
+                                        </p:panel>
+                                    </p:outputPanel>
+
+
+                                    <!--DIALOGS DE Registro / modificacion -->
+
+                                    <!-- Para Crear/modificar una nueva entidad -->
+                                    <p:outputPanel style="font-family: Arial;font-size: 12px;" id="RegistroEntidad">
+                                        <p:dialog header="#{MBEntidad.tituloFormEntidad}" widgetVar="DlgCrearEntidad"  height="auto" width="auto" showEffect="fade" hideEffect="fade">                   
+                                            <br/>
+                                            <table border="0" cellspacing="3" cellpadding="3" style="font-family:Arial;font-size: 12px">
+                                                <tr>
+                                                    <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><h:outputText value="N° documento de entidad: *"  /></td>
+                                                    <td><p:inputText id="txt_num_doc_enti" value="#{MBEntidad.numEntidad}" maxlength="12" pt:placeholder="N° Documento" style="width: 180px;text-transform: uppercase;" onkeypress="return validarSoloNumeros(event)"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><h:outputText value="Nombre entidad: *" /></td>
+                                                    <td><p:inputText id="txt_nom_enti" value="#{MBEntidad.nombreEntidad}" pt:placeholder="Nombre"  style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetras(event)"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p:outputLabel styleClass="Texto" for="Regim" value="Regimen: " />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu  id="Regim" style="width: 213px;font-size: 13px;" effect="fade" value="#{MBEntidad.codRegimen}">
+                                                            <p:ajax listener="#{MBEntidad.onCalifiReg()}" update="TipoReg"/>
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBPerito.cargRegPer}" />
+                                                        </p:selectOneMenu> 
+                                                    </td>
+                                                    <td>
+                                                        <p:outputLabel styleClass="Texto" for="TipoReg" value="Tipo Regimen:" />
+                                                    </td>
+                                                    <td>
+                                                        <p:selectOneMenu id="TipoReg" style="width: 213px;font-size: 13px;" effect="fade" value="#{MBEntidad.codTipRegimen}">
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaRegimen}" />
+                                                        </p:selectOneMenu> 
+                                                    </td>
+                                                </tr> 
+                                            </table>
+                                            <br/>
+                                            <center>
+                                                <table style="font-family:Arial;font-size: 13px">
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <center>
+                                                                <p:commandButton  icon="ui-icon-disk" value="Guardar" actionListener="#{MBEntidad.regisEntidad(1)}" rendered="#{MBEntidad.estadoRegistroEntidad}" id="BtnRegistroEntidad"
+                                                                                update=":contenedorGeneral:Contenedor:growl_General,InfEntidad,InfoEntidad" ajax="true"
+                                                                                  style="font-family: Arial;font-size: 13px;"/>
+                                                            </center>
+                                                            <p:commandButton  icon="ui-icon-disk" value="Actualizar" actionListener="#{MBEntidad.regisEntidad(2)}" id="BtnActualizaEntidad" rendered="#{MBEntidad.estadoActualizarEntidad}" 
+                                                                              action="#{MBPreRadicacion.cargarPaneles(2)}"
+                                                                              update=":contenedorGeneral:Contenedor:growl_General,
+                                                                              InfEntidad,InfoEntidad"
+                                                                              style="font-family: Arial;font-size: 13px;"/>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </center>
+                                            <br/>
+                                        </p:dialog>
+                                    </p:outputPanel>
+
+                                    <!--Crear/modificar una Nueva Sucursal -->
+                                    <p:outputPanel style="font-family: Arial;font-size: 12px;" id="RegistroSucursal">
+                                        <p:dialog header="#{MBEntidad.tituloFormSucursal}" widgetVar="DlgCrearSucursal" height="auto" width="auto" showEffect="fade" hideEffect="fade">
+
+                                            <br/>
+                                            <center>
+                                                <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3">
+                                                    <tr>
+                                                        <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td> <h:outputText value="Entidad *" /></td>
+                                                        <td> <p:selectOneMenu  id="Entidad" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.codEntidadSucursal}" filter="true">
+                                                                <f:selectItem  itemValue="0" itemLabel="--Seleccione--" />
+                                                                <f:selectItems  value="#{MBEntidad.cargaEnt}" />
+                                                            </p:selectOneMenu></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>  <h:outputText value="Codigo de oficina:" /></td>
+                                                        <td>    <p:inputText id="txt_cod_oficina" value="#{MBEntidad.codOficina}" pt:placeholder="Codigo" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetrasyNumeros(event)"/></td>
+                                                    </tr> 
+                                                    <tr>
+                                                        <td> <h:outputText value="Nombre de sucursal: *" /></td>
+                                                        <td> <p:inputText id="txt_nombre_sucursal" value="#{MBEntidad.nombreSucursal}" pt:placeholder="Nombre" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetras(event)"/></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><h:outputText value="Telefono: " /></td>
+                                                        <td><p:inputText id="txt_telefono_sucursal" value="#{MBEntidad.telefonoSucursal}" pt:placeholder="Telefono" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetrasyNumeros(event)"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><h:outputText value="Dirección: " /></td>
+                                                        <td> <p:inputText id="txt_direccion_sucursal" value="#{MBEntidad.direccionSucursal}" pt:placeholder="Dirección" style="width: 180px;text-transform: uppercase;" /></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td> <h:outputText value="Departamento:* " /></td>
+                                                        <td><p:selectOneMenu  id="DeptoSucur" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.codDeptoSucursal}" filter="true">
+                                                                <p:ajax listener="#{MBEntidad.onCiudad()}" update="Ciudadessucur"/>
+                                                                <f:selectItem  itemValue="0" itemLabel="--Seleccione--" />
+                                                                <f:selectItems  value="#{MBUbicacion.cargaDep}" />                                
+                                                            </p:selectOneMenu> </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><h:outputText value="Ciudad:* " /></td>
+                                                        <td> <p:selectOneMenu  id="Ciudadessucur" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.codCiudadSucursal}" filter="true">
+                                                                <f:selectItem  itemValue="0" itemLabel="--Seleccione--" />
+                                                                <f:selectItems  value="#{MBEntidad.cargaCiu}" />
+                                                            </p:selectOneMenu> </td>
+                                                    </tr>
+
+                                                </table>
+                                                <br/>
+                                                <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px" >
+                                                    <p:commandButton  icon="ui-icon-disk" value="Guardar" actionListener="#{MBEntidad.regisSucursal(1)}" rendered="#{MBEntidad.estadoRegistroSucursal}"  id="BtnRegistroSucursal" 
+                                                                      action="#{MBPreRadicacion.cargarPaneles(2)}"
+                                                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                                                      InfSucursal,InfoEntidad"
+                                                                      style="font-family: Arial;font-size: 13px;"/>
+                                                </h:panelGrid>
+                                                <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px">
+                                                    <p:commandButton  icon="ui-icon-disk" value="Actualizar" actionListener="#{MBEntidad.regisSucursal(2)}" id="BtnActualizaSucursal" rendered="#{MBEntidad.estadoActualizarSucursal}" 
+                                                                      action="#{MBPreRadicacion.cargarPaneles(2)}"
+                                                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                                                      InfSucursal,InfoEntidad"                                                                      
+
+                                                                      style="font-family: Arial;font-size: 13px;"/>
+                                                </h:panelGrid>  
+                                            </center>
+                                        </p:dialog>
+                                    </p:outputPanel>
+                                    <!--Crear/modificar una Nuevo asesor -->
+                                    <p:outputPanel style="font-family: Arial;font-size: 12px;" id="RegistroAsesor">
+                                        <p:dialog header="#{MBEntidad.tituloFormAsesor}" widgetVar="DlgCrearAsesor" height="auto" width="auto" showEffect="fade" hideEffect="fade">
+                                            <br/>
+                                            <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3">
+                                                <tr>
+                                                    <td> <b><p:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <h:outputText value="Entidad*" /></td>
+                                                    <td> <p:selectOneMenu id="EntidadAsesor" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.fk_entidadAsesor}" filter="true">                                
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione--"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaEnt}" />
+                                                            <p:ajax listener="#{MBEntidad.onSucursalRegis()}" update="SucursalAsesor"/>
+                                                        </p:selectOneMenu></td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <h:outputText value="Sucursal*" /></td>
+                                                    <td>     <p:selectOneMenu id="SucursalAsesor" style="font-family:Arial;font-size: 12px;width: 210px;" effect="fade" value="#{MBEntidad.fk_sucursalAsesor}" filter="true">                                
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione--"/>
+                                                            <f:selectItems  value="#{MBEntidad.cargaSucur}" />
+                                                        </p:selectOneMenu></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><h:outputText value="Nombre: *" /></td>
+                                                    <td>  <p:inputText id="txt_nombre_asesor" value="#{MBEntidad.nombreAsesor}" pt:placeholder="Nombre" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetras(event)" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><h:outputText value="Cargo *" /></td>
+                                                    <td><p:inputText id="txt_cargo_asesor" value="#{MBEntidad.cargoAsesor}" pt:placeholder="Cargo" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetras(event)" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><h:outputText value="Correo: " /></td>
+                                                    <td><p:inputText id="txt_correo_asesor" value="#{MBEntidad.mailAsesor}" pt:placeholder="Correo" style="width: 180px;text-transform: lowercase;" required="false" onkeypress="return validarCorreos(event)" 
+                                                                     validatorMessage="El formato del correo es incorrecto. Ej: ejemplo@dominio" >
+                                                            <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                        </p:inputText></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><h:outputText value="Telefono: " /></td>
+                                                    <td> <p:inputText id="txt_telefono_asesor" value="#{MBEntidad.telefonoAsesor}" pt:placeholder="Telefono" style="width: 180px;text-transform: uppercase;" onkeypress="return validarLetrasyNumeros(event)" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td> <h:outputText value="Estado:*" /></td>
+                                                    <td><p:selectOneMenu id="EstadoAsesor" style="font-family:Arial;font-size: 12px;width: 150px;" effect="fade" value="#{MBEntidad.estadoAsesor}" >                                
+                                                            <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                                            <f:selectItem itemValue="1" itemLabel="HABILITADO" />
+                                                            <f:selectItem itemValue="0" itemLabel="DESHABILITADO" />
+                                                        </p:selectOneMenu></td>
+                                                </tr>
+
+                                            </table>
+                                            <br/>
+                                            <center>                     
+                                                <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px">
+                                                    <p:commandButton  icon="ui-icon-disk" value="Guardar" actionListener="#{MBEntidad.regisAsesor(1)}" rendered="#{MBEntidad.estadoRegistroAsesor}" id="BtnRegistroAsesor" 
+                                                                      action="#{MBPreRadicacion.cargarPaneles(2)}" 
+                                                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                                                      InfAsesor,InfoEntidad"
+                                                                      style="font-family: Arial;font-size: 13px;"/>
+                                                </h:panelGrid>
+                                                <h:panelGrid columns="1" cellpadding="5" style="font-family:Arial;font-size: 13px">
+                                                    <p:commandButton  icon="ui-icon-disk" value="Actualizar" actionListener="#{MBEntidad.regisAsesor(2)}" id="BtnActualizaAsesor" rendered="#{MBEntidad.estadoActualizarAsesor}" 
+                                                                      action="#{MBPreRadicacion.cargarPaneles(2)}"
+                                                                      update=":contenedorGeneral:Contenedor:growl_General,
+                                                                      InfAsesor,InfoEntidad"
+                                                                      style="font-family: Arial;font-size: 13px;"/>
+                                                </h:panelGrid>
+                                            </center>
+                                        </p:dialog>
+                                    </p:outputPanel>
+                                </p:dialog>
+                            </p:outputPanel>
+
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:separator/>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <center>
+                            <table border="0" cellspacing="5" cellpadding="5">
+                                <tr>
+                                    <td>
+                                        <b>
+                                            <h:outputLabel  value="Observaciones:*  " style="font-family: Arial;font-size: 13px;" />
+                                        </b>
+                                    </td>
+                                    <td colspan="4">
+                                        <p:inputTextarea value="#{MBPreRadicacion.observaRegistro}" style="font-family: Arial;font-size: 12px;width: 300px;height: 50px;text-transform: uppercase;" placeholder="Observaciones" /> 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>
+                                            <h:outputLabel  value="Asignar a:* " style="font-family: Arial;font-size: 13px;" />
+                                        </b>
+                                    </td>
+                                    <td>
+                                        <p:commandButton value="Seleccionar analista" action="#{MBPreRadicacion.onAnalista()}" style="font-family: Arial;font-size: 11px;line-height:2px;" 
+                                                         update="DialoAnalista,AnalistaTable,
+                                                         :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-check"/>
+                                    </td>
+
+
+                                    <td>
+                                        <p:outputPanel id="PanelAnalista">
+
+                                            <c:choose>
+
+                                                <c:when test="#{MBPreRadicacion.nombreAnalista == '' }">
+                                                    <b><p:outputLabel value="Analista seleccionado: " style="width: 185px;font-size: 13px;" /></b>
+                                                    <p:outputLabel value="Ninguno" style="width: 185px;font-size: 13px;"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <b><p:outputLabel value="Analista seleccionado: " style="width: 185px;font-size: 13px;" /></b>
+                                                    <p:outputLabel value="#{MBPreRadicacion.nombreAnalista}" style="width: 185px;font-size: 13px;"/>
+                                                </c:otherwise>
+                                            </c:choose>
+
+                                        </p:outputPanel>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <center>
+                                            <br/>
+                                            <p:commandButton value="Registrar" action="#{MBPreRadicacion.insertRegistro()}"  icon="ui-icon-disk"
+                                                             update=":contenedorGeneral:Contenedor:growl_General" style="font-family: Arial;font-size: 13px;" />
+
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+
+            <p:dialog header="Analista" widgetVar="DlgAnalista" modal="false" width="600" height="430" showEffect="fade" hideEffect="fade" resizable="false" id="DialoAnalista">
+                <br/>
+                <center>
+                    <p:dataTable var="Anali" selectionMode="single" value="#{MBPreRadicacion.listAllMisAsignados}" widgetVar="Analista" 
+                                 rows="50" id="AnalistaTable" selection="#{MBPreRadicacion.preRadi}" scrollable="true" scrollHeight="auto" scrollWidth="auto" scrollRows="2"
+                                 rowKey="#{Anali.cod_Analista}" frozenRows="0" emptyMessage="No se encontraron Analistas relacionados con este Producto Entidad" >
+                        <p:column headerText="Nombre" filterBy="#{Anali.nom_Analista}" filterMatchMode="contains" style="font-family:Arial;font-size: 12px;width: 30px;">
+                            <h:outputText value="#{Anali.nom_Analista}" />
+                        </p:column>
+                        <p:column headerText="Total Registros Asignados Hoy"  style="font-family:Arial;font-size: 12px;width: 28px;">
+                            <h:outputText value="#{Anali.total_hoy}" />
+                        </p:column>p
+                        <p:column headerText="Total Registros Asignados Sin Revision"  style="font-family:Arial;font-size: 12px;width: 28px;">
+                            <h:outputText value="#{Anali.total}" />
+                        </p:column>                   
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton  update="PanelAnalista" icon="ui-icon.-check"
+                                      value="Seleccionar" action="#{MBPreRadicacion.seleccionAnalistaPreRadica()}" style="font-family: Arial;font-size: 13px;" />
+                </center>
+                <br/>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

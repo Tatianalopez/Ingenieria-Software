@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Consulta de las Plantillas de Documentos de Proceso</title>
+    </h:head>
+    <h:body>
+        <h:form id="FRMPlantilla">
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión de plantillas empresariales</p></b></big></big>                          
+                    </td>
+
+                </tr>
+            </table>
+            <p:panel style="border: none;">
+                <table style="font-family: Arial;font-size: 12px;" cellspacing="3" cellpadding="3">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator />      
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><p:outputLabel value="Seleccione el modulo al cual desea asociar la plantilla (Documento) empresarial: " /></td>
+                        <td>
+                            <p:selectOneMenu  style="width: 250px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codModulo1}" panelStyle="font-family: Arial;font-size: 12px;width: 210px" filter="true" filterMatchMode="contains">
+                                <p:ajax listener="#{MBAdministacion.seleccionModulo()}" update="PNListas"/>
+                                <f:selectItem id="Mod1" itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItemMod1"  value="#{MBAdministacion.cargModulo}" />
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+                </table>
+
+            </p:panel>
+            <p:outputPanel id="PNListas">
+                <p:panel style="border: none;" rendered="#{MBAdministacion.codModulo1!=''}">
+                    <p:dataList value="#{MBArchivos.listaArchivosAdmin}" var="ListAdm"   varStatus="Op"  id="ListasAd" itemType="none" emptyMessage="No hay archivos subidos" style="border: none;">
+
+                        <table cellspacing="3" cellpadding="3">
+
+                            <tr>     
+                                <td><p:commandButton  ajax="false"  icon="ui-icon-arrowthick-1-s"  action="#{MBArchivos.descargarArchAva(3,ListAdm.numero)}" title="Visualizar archivo #{ListAdm.name}" update=":contenedorGeneral:Contenedor:growl_General,ListasAd"  style="width: 16px;height: 14px;" /></td>
+                                <td><p:commandButton  ajax="false"  icon="ui-icon-close"  action="#{MBArchivos.eliminarAch(7, ListAdm.numero)}" title="Eliminar archivo #{ListAdm.name}"  update=":contenedorGeneral:Contenedor:growl_General,PNListas" style="width: 16px;height: 14px;" /></td>
+                                <td><b><h:outputText value="#{ListAdm.name} - " style="font-size: 12px;font-family: Arial;"/></b><br/></td>
+                                <td><h:outputText value="#{ListAdm.fecha} - "  style="font-size: 12px;font-family: Arial;"/><br/></td>
+                                <td><h:outputText value="#{ListAdm.tamano} bytes  "  style="font-size: 12px;font-family: Arial;"/><br/></td>
+                            </tr>
+                        </table>
+                    </p:dataList>
+                    <br/>
+                    <table style="font-family: Arial;font-size: 12px;" cellspacing="4" cellpadding="4">
+                        <tr>
+                            <td><b><p:outputLabel value="Cargar archivo para el modulo seleccionado:" rendered="#{MBAdministacion.codModulo1!=''}" /></b></td>
+                            <td><p:fileUpload mode="simple" value="#{MBArchivos.nombreArchivo}"  auto="true" sizeLimit="100000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" style="font-size: 12px;font-family: Arial;" rendered="#{MBAdministacion.codModulo1!=''}" /></td>
+                            <td colspan="2"><center>
+                                    <p:commandButton icon="ui-icon-arrowthick-1-n" value="Cargar" title="Subir plantilla del modulo seleccionado" action="#{MBArchivos.docEmpre(MBAdministacion.codModulo1)}"  rendered="#{MBAdministacion.codModulo1!=''}" update=":contenedorGeneral:Contenedor:growl_General,ListasAd" ajax="false"  />
+                                </center></td>
+                        </tr>
+                    
+                    </table>
+                </p:panel>
+            </p:outputPanel>
+        </h:form>
+    </h:body>
+</html>
+

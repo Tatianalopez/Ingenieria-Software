@@ -1,0 +1,177 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+    <h:head>
+        <title>Auditoria</title>
+        <h:outputStylesheet name="./css/estilo.css"/> 
+        <script>
+            PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Selecciona Hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Seleccione Fecha',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día'
+            };
+        </script>
+    </h:head>
+    <h:body style="background: white;"> 
+        <h:form id="formAudit" >
+            <p:growl id="growl" showDetail="true" sticky="true" life="20000" />
+
+
+            <!-- radios para los filtros -->
+            <p:panel style="border: none;">
+                <br/>
+                <p:outputLabel value="Filtrar consulta por: " style="font-family:Arial;font-size: 13px;"/>
+                <p:separator/>
+                <p:selectOneRadio value="#{MBAdministacion.opcionFiltroAuditoria}">
+                    <f:selectItem itemLabel="Todos los registros" itemValue="3" />
+                    <f:selectItem itemLabel="Por empleado" itemValue="1" />
+                    <f:selectItem itemLabel="Entre fecha y fecha" itemValue="2" />           
+                    <p:ajax event="change" update=":formAudit:FiltroEmpleadosAuditoria,growl,PanelAuditoriaTabla" listener="#{MBAdministacion.filtrosAuditoria()}"/>
+                </p:selectOneRadio>
+            </p:panel>
+            <!-- filtros -->
+
+            <!-- filtro por empleados -->
+            <p:outputPanel autoUpdate="true" id="FiltroEmpleadosAuditoria" >
+                <p:panel rendered="#{MBAdministacion.opcionFiltroAuditoria == 1}" style="border: none;">
+                    <br/>
+                    <table  cellspacing="3" cellpadding="3">
+                        <tr>
+                            <td><p:outputLabel value="Empleados ISA:  " style="font-family:Arial;font-size: 12px;"/></td>
+                            <td><p:selectOneMenu  id="EmpleadoFiltroAudit" style="width:200px;font-size: 12px;" value="#{MBAdministacion.empleadoAuditoria}">
+                                    <f:selectItem id="TPEnt" itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                    <f:selectItems id="SelItem"  value="#{MBAdministacion.listEmpAuditoria}" />
+                                </p:selectOneMenu>
+                            </td>
+                            <td>
+                                <p:commandButton   icon="ui-icon-arrowthick-1-e" value="Filtrar" style="font-family: Arial;font-size: 13px;" action="#{MBAdministacion.consultaAuditoriaFiltros(1, 1)}"
+                                                   update="growl,PanelAuditoriaTabla" />
+                            </td>
+                        </tr>
+                    </table>                 
+                </p:panel>
+            </p:outputPanel>
+
+            <!-- filtro por fechas -->
+            <p:outputPanel autoUpdate="true">
+                <p:panel rendered="#{MBAdministacion.opcionFiltroAuditoria == 2}" style="border: none;">                  
+                    <br/>
+                    <table  cellspacing="3" cellpadding="3">
+                        <tr>
+                            <td><p:outputLabel value="Entre: " style="font-family:Arial;font-size: 12px;"/></td>
+                            <td>
+
+                                <p:calendar id="FecInicial"  pattern="yyyy-MM-dd HH:mm" mask="true" locale="es" value="#{MBAdministacion.fechainicial}" placeholder="AAAA / MM / DD HH:mm"  style="font-family:Arial;font-size: 12px;"
+                                            mindate="1995-01-01" maxdate="#{MBAdministacion.fecha_actual}">
+                                    <p:ajax event="dateSelect" listener="#{MBAdministacion.verifiFec()}" update="growl" />
+                                    <p:ajax event="change" listener="#{MBAdministacion.verifiFec()}" update="growl" />
+                                </p:calendar>
+
+
+                            </td>
+
+                            <td><p:outputLabel value="y: " style="font-family:Arial;font-size: 12px;"/></td>
+                            <td>
+                                <p:calendar id="Fecfinal"  pattern="yyyy-MM-dd HH:mm" mask="true" locale="es" value="#{MBAdministacion.fechafinal}" placeholder="AAAA / MM / DD HH:mm"  style="font-family:Arial;font-size: 12px;"
+                                            mindate="1995-01-01" maxdate="#{MBAdministacion.fecha_actual}">
+                                    <p:ajax event="dateSelect" listener="#{MBAdministacion.verifiFec()}" update="growl" />
+                                    <p:ajax event="change" listener="#{MBAdministacion.verifiFec()}" update="growl" />
+                                </p:calendar>
+                            </td>
+
+
+                            <td>
+                                <p:commandButton   icon="ui-icon-arrowthick-1-e" value="Filtrar" style="font-family: Arial;font-size: 13px;" 
+                                                   update="growl,PanelAuditoriaTabla"  action="#{MBAdministacion.consultaAuditoriaFiltros(1, 2)}" />
+                            </td>
+                        </tr>
+                        <tr>
+
+                        </tr>
+                    </table>  
+                </p:panel>
+            </p:outputPanel>
+
+            <p:separator />
+
+            <p:outputPanel  id="PanelAuditoriaTabla">
+
+                <p:panel style="border: none;">
+                    <p:dataTable var="Audita" value="#{MBAdministacion.listAuditoria}" id="AuditoriaTable1" style="font-family: Arial;font-size: 12px;"  
+                                 rowKey="#{Audita.llaveAuditoria}" widgetVar="Auditoria" rendered="#{MBAdministacion.estadoTablaAuditoria}"
+                                 scrollHeight="270" scrollable="true" liveScroll="true" scrollRows="100" emptyMessage="No se encontraron resultados">
+
+                        <p:column headerText="Fecha"   style="font-family:Arial;font-size: 12px;width: 150px;">
+                            <h:outputText value="#{Audita.fechaAuditoria}" />
+                        </p:column>
+                        <p:column headerText="Registro usuario"  style="font-family:Arial;font-size: 12px;width: 150px;">
+                            <p:outputLabel value="#{Audita.nombreEmpAuditoria}" />
+                        </p:column>             
+                        <p:column headerText="Observacion"   style="font-family:Arial;font-size: 12px;width: 150px;">
+                            <p:outputLabel value="#{Audita.observacionAuditoria}" />
+                        </p:column>
+                        <p:column headerText="Valor Nuevo"   style="font-family:Arial;font-size: 12px;width: 150px;">
+                            <p:outputLabel value="#{Audita.valNewAuditoria}" />
+                        </p:column>
+                        <p:column headerText="Valor Anterior"  style="font-family:Arial;font-size: 12px;width: 150px;">
+                            <p:outputLabel value="#{Audita.valOldAuditoria}" />
+                        </p:column>                    
+                    </p:dataTable>
+
+
+                    <p:separator rendered="#{MBAdministacion.estadoTablaAuditoria}"/>
+
+                    <table style="float: right;" border="0">
+                        <tr>
+                            <td><p:commandButton rendered="#{MBAdministacion.estadoTablaAuditoria and MBAdministacion.opcionFiltroAuditoria == 1}"  
+                                                 icon="ui-icon-note" value="Generar reporte por empleados" style="font-family: Arial;font-size: 13px;float: right;" 
+                                                 action="#{MBAdministacion.consultaAuditoriaFiltros(2, 1)}"  update="growl" ajax="false"/></td>
+                            <td><p:commandButton rendered="#{MBAdministacion.estadoTablaAuditoria and MBAdministacion.opcionFiltroAuditoria == 2}"  
+                                                 icon="ui-icon-note" value="Generar reporte por fechas" style="font-family: Arial;font-size: 13px;float: right;" 
+                                                 action="#{MBAdministacion.consultaAuditoriaFiltros(2, 2)}"  update="growl" ajax="false"/></td>
+                            <td> 
+                                <p:commandButton rendered="#{MBAdministacion.estadoTablaAuditoria and MBAdministacion.opcionFiltroAuditoria == 3}"  
+                                                 icon="ui-icon-note" value="Generar reporte todo" style="font-family: Arial;font-size: 13px;float: right;" 
+                                                 action="#{MBAdministacion.consultaAuditoriaFiltros(2, 3)}"  update="growl" ajax="false"/></td>
+                        </tr>
+                    </table>
+
+                    <br/> 
+
+                    <center>
+                        <b> <p:outputLabel value="Total registros encontrados: #{fn:length(MBAdministacion.listAuditoria)}" style="font-family: Arial;font-size: 13px;" rendered="#{MBAdministacion.estadoTablaAuditoria}"/></b>
+                    </center>
+                    <br/>
+                </p:panel>
+            </p:outputPanel>
+
+
+
+        </h:form>
+    </h:body>
+</html>

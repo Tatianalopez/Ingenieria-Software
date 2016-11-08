@@ -1,0 +1,510 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Gestión de reglas de proceso</title>
+    </h:head>
+    <h:body>
+        <h:form id="RegArcAva">
+            <table border="0" cellspacing="2" cellpadding="2">
+                <tr>
+                    <td><big><big><b><p class="Title">Gestión de reglas de proceso</p></b></big></big></td>
+                </tr>
+                <tr>
+                    <td colspan="10"> <p:separator /></td>
+                </tr> 
+                <tr>
+                    <td>
+                        <p:panel id="Opcion" style="border: none;">
+                            <b><p:outputLabel value="Seleccione una opción: " style="font-family:Arial;font-size: 13px;"/></b>
+                            <br/>
+                            <p:selectOneRadio id="OpRegla" value="#{MBAdministacion.opcionRegla}" style="font-family: Arial;font-size: 12px;">
+                                <f:selectItem itemLabel="Archivos de avalúos" itemValue="1"  />
+                                <f:selectItem itemLabel="Archivos de cliente" itemValue="2" />
+                                <!--    <f:selectItem itemLabel="Condición de proceso" itemValue="3" />
+                                      <f:selectItem itemLabel="Lista de chequeo" itemValue="4" /> -->   
+                                <p:ajax event="change" 
+                                        update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:RegArcAva:ArchiAvaluo,:contenedorGeneral:Contenedor:RegArcAva:ArchiCliente,:contenedorGeneral:Contenedor:RegArcAva:Condicion,:contenedorGeneral:Contenedor:RegArcAva:PreCondic" 
+                                        listener="#{MBAdministacion.verifiReglaEscogida()}" />
+                            </p:selectOneRadio>
+                        </p:panel>
+                    </td>
+                </tr>               
+                <tr>
+                    <td>
+                        <!-- Datatable que carga todas las actividades r condicion existentes en la base de datos -->
+                        <p:outputPanel id="ArchiAvaluo" >
+                            <p:panel id="ArcAvaDetail"  rendered="#{MBAdministacion.opcionArchivoAvaluo}" style="border: none;">
+                                <table cellspacing="3" cellpadding="3">
+                                    <tr>
+                                        <td>
+                                            <p:commandButton value="Crear regla de archivo para avaluos" action="#{MBAdministacion.opendilogReglaArchivo(1)}" icon="ui-icon-arrowthick-1-e" 
+                                                             style="font-family: Arial;font-size: 13px;" update=":contenedorGeneral:Contenedor:RegArcAva:ArchAval"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>    
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listArcAva)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <!--scrollable="true" liveScroll="true" scrollRows="20" scrollHeight="200" -->
+                                            <p:dataTable var="ArcAva" value="#{MBAdministacion.listArcAva}"  id="ArchiAvaTable" widgetVar="ArchiAvaluo" style="font-family: Arial;font-size: 12px;"
+                                                         rowKey="#{ArcAva.codArcAva}" selectionMode="single"  selection="#{MBAdministacion.admArchivAval}"                                             
+
+                                                         emptyMessage="No se encontraron registros" >
+                                                <p:column headerText="Estado"  filterBy="#{ArcAva.estadoArcAva}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcAva.estadoArcAva}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+                                                <p:column headerText="Modulo"  filterBy="#{ArcAva.nombreModulo}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcAva.nombreModulo}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+                                                <p:column headerText="Tipo de archivo"  filterBy="#{ArcAva.resultadoParametro}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcAva.resultadoParametro}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+                                                <p:column headerText="Tipo de avaluo"  filterBy="#{ArcAva.nombreTipAvaluo}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcAva.nombreTipAvaluo}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+                                                <p:column headerText="Producto entidad"  filterBy="#{ArcAva.nombreProEnt} - #{ArcAva.nombre_TipProEnt}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcAva.nombreProEnt} - #{ArcAva.nombre_TipProEnt}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>                        
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton  update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:RegArcAva:PnlModifi" 
+                                                                  value="Modificar" icon="ui-icon-check" action="#{MBAdministacion.verifiReglasProceso(1)}" rendered="#{MBAdministacion.listArcAva.size()>0}" 
+                                                                  style="font-family: Arial;font-size: 13px;"/>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <br/>
+                            </p:panel>
+                        </p:outputPanel>            
+
+                        <!--DATABLE INFORMACION DE LAS REGLAS DE ARCHIVO DE CLIENTE-->
+                        <p:outputPanel id="ArchiCliente" >
+                            <p:panel id="ArcCliDetail"  rendered="#{MBAdministacion.opcionArchivoCliente}" style="border: none;">
+                                <table cellspacing="3" cellpadding="3">
+                                    <tr>                                        
+                                        <td>
+                                            <p:commandButton value="Crear regla de archivo para clientes" action="#{MBAdministacion.opendilogReglaArchivo(2)}" 
+                                                             style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" update=":contenedorGeneral:Contenedor:RegArcAva:ArchClient" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listArcCli)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="ArcCli" value="#{MBAdministacion.listArcCli}"  id="ArchiCliTable" style="font-family: Arial;font-size: 12px;"  widgetVar="ArchiCliente"
+                                                         rowKey="#{ArcCli.codArcCli}" selectionMode="single"  selection="#{MBAdministacion.admArchvClie}"                                              
+                                                         emptyMessage="No se encontraron registros" >                       
+                                                <p:column headerText="Estado"  filterBy="#{ArcCli.estadoArcCli}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcCli.estadoArcCli}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+                                                <p:column headerText="Modulo"  filterBy="#{ArcCli.nombreModulo}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcCli.nombreModulo}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+                                                <p:column headerText="Tipo de archivo"  filterBy="#{ArcCli.resultadoParametro}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcCli.resultadoParametro}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+                                                <p:column headerText="Regimen"  filterBy="#{ArcCli.nombreRegimen}" style="font-family: Arial;font-size: 12px;">
+                                                    <p:outputLabel value="#{ArcCli.nombreRegimen}" style="font-family: Arial;font-size: 12px;"/>
+                                                </p:column>
+
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:RegArcAva:PnlModifi" 
+                                                                 value="Modificar" action="#{MBAdministacion.verifiReglasProceso(2)}" style="font-family: Arial;font-size: 13px;" icon="ui-icon-check" rendered="#{MBAdministacion.listArcCli.size()>0}" />
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+                            </p:panel>
+                        </p:outputPanel>
+
+                        <!--DATA TABLE PARA LAS CONDICIONES DE PROCESO-->
+                        <p:outputPanel id="Condicion" >
+                            <p:panel id="CondicionDetail"  rendered="#{MBAdministacion.opcionCondicion}" style="border: none;">
+                                <table>
+                                    <tr>                                       
+                                        <td>
+                                            <p:commandButton value="Crear condición" action="#{MBAdministacion.opendilogReglaArchivo(3)}" icon="ui-icon-arrowthick-1-e" 
+                                                             style="font-family: Arial;font-size: 13px;" update=":contenedorGeneral:Contenedor:RegArcAva:Condi" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+                                <p:dataTable var="Cond" value="#{MBAdministacion.listCondicion}" id="CondicionTable" style="font-family: Arial;font-size: 12px;"  widgetVar="CondicionT"
+                                             rowKey="#{Cond.codCondicion}" selectionMode="single"  selection="#{MBAdministacion.admArchCondi}" scrollHeight="340" scrollable="true" >
+
+                                    <p:column headerText="Estado"  filterBy="#{Cond.estadoCondicion}" style="font-family: Arial;font-size: 12px;">
+                                        <p:outputLabel value="#{Cond.estadoCondicion}" style="font-family: Arial;font-size: 12px;"/>
+                                    </p:column>
+                                    <p:column headerText="Modulo"  filterBy="#{Cond.nombreModulo}" style="font-family: Arial;font-size: 12px;">
+                                        <p:outputLabel value="#{Cond.nombreModulo}" style="font-family: Arial;font-size: 12px;"/>
+                                    </p:column>
+                                    <p:column headerText="Tabla:"  filterBy="#{Cond.tablaCondicion}" style="font-family: Arial;font-size: 12px;">
+                                        <p:outputLabel value="#{Cond.tablaCondicion}" style="font-family: Arial;font-size: 12px;"/>
+                                    </p:column>
+                                    <p:column headerText="Campo de tabla"  filterBy="#{Cond.campoCondicion}" style="font-family: Arial;font-size: 12px;">
+                                        <p:outputLabel value="#{Cond.campoCondicion}" style="font-family: Arial;font-size: 12px;"/>
+                                    </p:column>
+                                    <p:column headerText="Producto Entidad"  filterBy="#{Cond.nombreProEnt} - #{Cond.nombre_TipProEnt}" style="font-family: Arial;font-size: 12px;">
+                                        <p:outputLabel value="#{Cond.nombreProEnt} - #{Cond.nombre_TipProEnt}" style="font-family: Arial;font-size: 12px;"/>
+                                    </p:column>                        
+                                    <p:column headerText="Descripción"  filterBy="#{Cond.descripcionCondicion}" style="font-family: Arial;font-size: 12px;">
+                                        <p:outputLabel value="#{Cond.descripcionCondicion}" style="font-family: Arial;font-size: 12px;"/>
+                                    </p:column>                    
+
+                                    <br/>
+                                    <center>
+                                        <p:commandButton update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:RegArcAva:PnlModifi"
+                                                         value="Seleccionar registro" action="#{MBAdministacion.verifiReglasProceso(3)}" style="font-family: Arial;font-size: 13px;"
+                                                         icon="ui-icon-check" rendered="#{MBAdministacion.listCondicion.size()>0}"/>
+                                    </center>
+                                    <br/>
+
+                                </p:dataTable>
+                            </p:panel>
+                        </p:outputPanel>
+                    </td>
+                </tr>
+            </table>
+
+            <p:outputPanel id="PreCondic">
+                <p:panel id="PreCondDetail"  rendered="#{MBAdministacion.opcionListaChequeo}" style="border: none;">                   
+                    <p:dataTable var="PreCond" value="#{MBAdministacion.listPreCondicion}" id="PreCondicionTable" style="font-family: Arial;font-size: 12px;"  widgetVar="PreCondic"
+                                 rowKey="#{PreCond.codPreCondicion}" selectionMode="single"  selection="#{MBAdministacion.admArchPreCond}" scrollHeight="340" scrollable="true" >
+
+                        <p:column headerText="Estado"  filterBy="#{PreCond.estadoPreCondicion}" style="font-family: Arial;font-size: 12px;">
+                            <p:outputLabel value="#{PreCond.estadoPreCondicion}" style="font-family: Arial;font-size: 12px;"/>
+                        </p:column>
+                        <p:column headerText="Detalle"  filterBy="#{PreCond.detallePreCondicion}" style="font-family: Arial;font-size: 12px;">
+                            <p:outputLabel value="#{PreCond.detallePreCondicion}" style="font-family: Arial;font-size: 12px;"/>
+                        </p:column>
+                        <p:column headerText="Modulo"  filterBy="#{PreCond.nombreModulo}" style="font-family: Arial;font-size: 12px;">
+                            <p:outputLabel value="#{PreCond.nombreModulo}" style="font-family: Arial;font-size: 12px;"/>
+                        </p:column>
+                        <p:column headerText="Producto Entidad"  filterBy="#{PreCond.nombreProEnt}" style="font-family: Arial;font-size: 12px;">
+                            <p:outputLabel value="#{PreCond.nombreProEnt}" style="font-family: Arial;font-size: 12px;"/>
+                        </p:column>
+                        <p:column headerText="T.Producto Entidad"  filterBy="#{PreCond.nombre_TipProEnt}" style="font-family: Arial;font-size: 12px;">
+                            <p:outputLabel value="#{PreCond.nombre_TipProEnt}" style="font-family: Arial;font-size: 12px;"/>
+                        </p:column>
+
+                    </p:dataTable>
+                    <br/>
+                    <center>
+                        <p:commandButton process="PreCondicionTable" update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:RegArcAva:PnlModifi" 
+                                         value="Seleccionar registro"   icon="ui-icon-check" action="#{MBAdministacion.verifiReglasProceso(4)}" rendered="#{MBAdministacion.listPreCondicion.size()>0}"  style="font-family: Arial;font-size: 13px;"/>
+                    </center>
+                    <br/>
+                </p:panel> 
+            </p:outputPanel>
+
+            <!--DIALOGS DE INFORMACION-->
+            <!-- Panel para cargar la informacion de producto entidad -->
+            <p:dialog id="ArchAval" header="Registrar regla de archivos" widgetVar="DlgInserReglaArc" modal="false" height="auto" width="auto" showEffect="fade" hideEffect="fade" style="font-family: Arial;font-size: 13px;">
+
+                <br/>
+
+                <table border="0" cellspacing="3" cellpadding="3">
+                    <tr>
+                        <td> <b><p:outputLabel styleClass="Texto" value="Campos obligatorios (*)"  style="font-family: Arial;font-size: 13px;color: red;"  /></b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" > <p:separator /></td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Modulo: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td> <p:selectOneMenu  style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codModulo}" panelStyle="font-family: Arial;font-size: 12px;width: 210px" filter="true" filterMatchMode="contains">
+                                <f:selectItem id="Mod" itemValue="0" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItemMod"  value="#{MBAdministacion.cargModulo}" />
+                            </p:selectOneMenu></td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Tipo de avalúo: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>  
+                            <p:selectOneMenu  id="CmbTipAval" style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codTipAvaluo}" >
+                                <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                <f:selectItems  value="#{MBAvaluo.cargaTipAvaluo}" />
+                                <p:ajax listener="#{MBAdministacion.onChangeTipoAvaluo()}" update="TipArc"/>
+                            </p:selectOneMenu> </td>
+                    </tr>
+
+                    <tr>
+                        <td> <p:outputLabel value="Producto entidad: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>
+                            <p:selectOneMenu  style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.adm.codProEnt}" panelStyle="font-family: Arial;font-size: 12px;width: 210px">
+                                <p:ajax listener="#{MBAdministacion.onTipProEnt()}" update="TipProEnti"/>
+                                <f:selectItem id="PrEnt" itemValue="0" itemLabel="--Seleccione--"/>
+                                <f:selectItems value="#{MBAdministacion.proEnt}" />
+                            </p:selectOneMenu></td>
+                    </tr>
+
+                    <tr>
+                        <td>   <p:outputLabel for="TipProEnti" value="Tipo Producto Entidad:* " style="font-family: Arial;font-size: 13px;"/></td>
+                        <td> 
+                            <p:selectOneMenu  id="TipProEnti" style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codTipProEnt}" panelStyle="font-family: Arial;font-size: 12px;width: 210px">
+                                <f:selectItem id="TPEnt" itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                <f:selectItems id="SelItem"  value="#{MBAdministacion.tipProEnt}" />
+                            </p:selectOneMenu> </td>
+                    </tr>
+
+                    <tr>
+                        <td>  <p:outputLabel value="Tipo de archivo: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>   
+                            <p:selectOneMenu id="TipArc" style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codParametro}" panelStyle="font-family: Arial;font-size: 12px;width: 250px" filter="true" filterMatchMode="contains" >
+                                <f:selectItem  itemValue="0" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                <f:selectItems id="SelItemTipArc"  value="#{MBAdministacion.cargTipArchAva}" />
+                            </p:selectOneMenu></td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Estado: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>  <p:selectOneRadio id="RBTArc" value="#{MBAdministacion.estadoArcAva}" style="font-family: Arial;font-size: 13px;">
+                                <f:selectItem itemLabel="Obligatorio" itemValue="1" />
+                                <f:selectItem itemLabel="No obligatorio" itemValue="0" />
+                            </p:selectOneRadio>
+                        </td>
+                    </tr>
+                </table>
+
+                <br/>
+                <center>
+                    <table>
+                        <tr>
+                            <td>
+                                <p:commandButton id="BTNGuard" value="Registrar regla" action="#{MBAdministacion.verifiReglaArcAvaluo()}" 
+                                                 update=":contenedorGeneral:Contenedor:growl_General,
+                                                 :contenedorGeneral:Contenedor:RegArcAva:ArchiAvaTable,
+                                                 :contenedorGeneral:Contenedor:RegArcAva:ArchiAvaluo"
+                                                 style="font-family: Arial;font-size: 13px;" icon="ui-icon-disk"/>
+                            </td>
+                        </tr>
+                    </table>
+                </center>
+                <br/>
+
+            </p:dialog>
+
+            <!--Dialog de informacion para crear las reglas del cliente-->
+            <p:dialog id="ArchClient" header="Registrar regla de archivos" widgetVar="DlgInserReglaCli" modal="false" height="auto" width="auto" showEffect="fade" hideEffect="fade" style="font-family: Arial;font-size: 13px;">
+
+                <br/>
+                <table border="0" cellspacing="3" cellpadding="3">
+                    <tr>
+                        <td> <b><p:outputLabel styleClass="Texto" value="Campos obligatorios (*)"  style="font-family: Arial;font-size: 13px;color: red;"  /></b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" > <p:separator /></td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Modulo: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td> <p:selectOneMenu  style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codModulo1}" panelStyle="font-family: Arial;font-size: 12px;width: 210px" filter="true" filterMatchMode="contains">
+                                <f:selectItem id="Mod1" itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItemMod1"  value="#{MBAdministacion.cargModulo}" />
+                            </p:selectOneMenu></td>
+                    </tr>
+
+                    <tr>
+                        <td>  <p:outputLabel value="Tipo de archivo: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>   
+                            <p:selectOneMenu  style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codParametro1}" panelStyle="font-family: Arial;font-size: 12px;width: 250px" filter="true" filterMatchMode="contains" >
+                                <f:selectItem id="TipArc1" itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItemTipArc2"  value="#{MBAdministacion.cargTipArchCli}" />
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>  <p:outputLabel value="Regimen: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>   
+                            <p:selectOneMenu  id="Regim" style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.codRegimen}">
+                                <f:selectItem  itemValue="" itemLabel="--Seleccione--" noSelectionOption="true"/>
+                                <f:selectItems  value="#{MBPerito.cargRegPer}" />
+                            </p:selectOneMenu> 
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Estado: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>   <p:selectOneRadio id="RBTArcCl" value="#{MBAdministacion.estadoArcCli}" style="font-family: Arial;font-size: 13px;">
+                                <f:selectItem itemLabel="Obligatorio" itemValue="1" />
+                                <f:selectItem itemLabel="No obligatorio" itemValue="0" />
+                            </p:selectOneRadio>
+                        </td>
+                    </tr>
+                </table>
+
+                <br/>
+                <center>
+                    <table>
+                        <tr>
+                            <td>
+                                <p:commandButton id="BTNGuard1" value="Registrar regla" action="#{MBAdministacion.verifiReglaArcCliente()}"
+                                                 update=":contenedorGeneral:Contenedor:growl_General,
+                                                 :contenedorGeneral:Contenedor:RegArcAva:ArchiCliTable,  
+                                                 :contenedorGeneral:Contenedor:RegArcAva:ArchiCliente"
+                                                 icon="ui-icon-disk"
+                                                 style="font-family: Arial;font-size: 13px;"/>
+                            </td>
+                        </tr>
+                    </table>
+                </center>
+                <br/>
+
+
+            </p:dialog>
+
+            <!--DIALOG PARA LA INFORMACION DE LA CONDICION-->
+            <p:dialog id="Condi" header="Condición de proceso" widgetVar="DlgIngCondicion" modal="false" height="auto" width="auto" showEffect="fade" 
+                      hideEffect="fade" style="font-family: Arial;font-size: 13px;">
+
+                <br/>
+                <table border="0" cellspacing="3" cellpadding="3">
+                    <tr>
+                        <td> <b><p:outputLabel styleClass="Texto" value="Campos obligatorios (*)"  style="font-family: Arial;font-size: 13px;color: red;"  /></b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" > <p:separator /></td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Modulo: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>   <p:selectOneMenu  style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.adm.codModulo}">
+                                <f:selectItem id="Mod3" itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItemMod3"  value="#{MBAdministacion.cargModulo}" />
+                            </p:selectOneMenu></td>
+                    </tr>                 
+
+                    <tr>
+                        <td> <p:outputLabel value="Producto entidad: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>
+                            <p:selectOneMenu  style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.adm.codProEnt}">
+                                <p:ajax listener="#{MBAdministacion.onTipProEnt()}" update="TipProEnti1"/>
+                                <f:selectItem id="PrEnt3" itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItemTDoc3"  value="#{MBAdministacion.proEnt}" />
+                            </p:selectOneMenu></td>
+                    </tr>
+
+                    <tr>
+                        <td>   <p:outputLabel for="TipProEnti" value="Tipo Producto Entidad:* " style="font-family: Arial;font-size: 13px;"/></td>
+                        <td> 
+
+                            <p:selectOneMenu  id="TipProEnti1" style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.adm.codTipProEnt}" panelStyle="font-family: Arial;font-size: 12px;width: 210px">
+                                <f:selectItem id="TPEnt1" itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItem1"  value="#{MBAdministacion.tipProEnt}" />
+                            </p:selectOneMenu>  </td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Tabla: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>  
+                            <p:selectOneMenu  style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.adm.tablaCondicion}">
+                                <p:ajax listener="#{MBAdministacion.onTable()}" update="Column"/>
+                                <f:selectItem id="Tab" itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems id="SelItemTab"  value="#{MBAdministacion.cargTabla}" />
+                            </p:selectOneMenu> </td>
+                    </tr>
+
+                    <tr>
+                        <td>  <p:outputLabel value="Columna de la tabla: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>   
+                            <p:selectOneMenu id="Column" style="width: 210px;font-size: 12px;" effect="fade" value="#{MBAdministacion.adm.campoCondicion}" >
+                                <f:selectItem  itemValue="" itemLabel="--Seleccione--"/>
+                                <f:selectItems  value="#{MBAdministacion.cargColumna}" />
+                            </p:selectOneMenu></td>
+                    </tr>
+
+                    <tr>
+                        <td>   <p:outputLabel for="DesCon" value="Descripcion condición: * " style="font-family: Arial;font-size: 13px;" /></td>
+                        <td>   
+                            <p:inputTextarea id="DesCon" value="#{MBAdministacion.adm.descripcionCondicion}" 
+                                             style="font-family: Arial;font-size: 12px;width: 210px;height: 50px" placeholder="Ingrese una descripción"/>  
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><p:outputLabel value="Estado: *" style="font-family: Arial;font-size: 13px;"/></td>
+                        <td>     <p:selectOneRadio id="RBTCon2" value="#{MBAdministacion.adm.estadoCondicion}" style="font-family: Arial;font-size: 13px;">
+                                <f:selectItem itemLabel="Obligatorio" itemValue="1" />
+                                <f:selectItem itemLabel="No obligatorio" itemValue="0" />
+                            </p:selectOneRadio>
+                        </td>
+                    </tr>
+                </table>
+
+                <br/>
+
+                <center>
+                    <table>
+                        <tr>
+                            <td>
+                                <p:commandButton id="BTNGuard2" value="Registrar regla" action="#{MBAdministacion.verifiCondicion()}" 
+                                                 update=":contenedorGeneral:Contenedor:growl_General,
+                                                 :contenedorGeneral:Contenedor:RegArcAva:CondicionTable, 
+                                                 :contenedorGeneral:Contenedor:RegArcAva:Condicion"  icon="ui-icon-disk"
+                                                 style="font-family: Arial;font-size: 13px;"/>
+                            </td>
+                        </tr>
+                    </table>
+                </center>
+                <br/>
+
+
+            </p:dialog>
+
+            <!--DIALOG PARA REALIZAR LA MODIFICACION DE LAS REGLAS DE PROCESO-->
+            <p:dialog id="ModiReglProc" header="Configuración" widgetVar="DlgModRegPro" resizable="false" modal="false" height="auto" width="auto" showEffect="fade"
+                      hideEffect="fade" style="font-family: Arial;font-size: 12px;" >
+                <p:outputPanel  style="font-family: Arial;font-size: 12px;">
+                    <p:panel id="PnlModifi">
+                        <h:inputHidden value="#{MBAdministacion.tipoRegla}" />
+                        <table border="0" cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td><p:outputLabel value="Cambiar estado: " /></td>
+                                <td><p:selectOneRadio id="OpReglaMod" value="#{MBAdministacion.opcionHabilitar}">
+                                        <f:selectItem itemLabel="Obligatorio" itemValue="Si"/>
+                                        <f:selectItem itemLabel="No obligatorio" itemValue="No" />
+                                    </p:selectOneRadio>
+                                </td>
+                            </tr>                           
+                        </table>
+                        <br/>
+                        <center>
+                            <table>
+                                <tr>
+                                    <td colspan="2"><center><p:commandButton value="Actualizar" action="#{MBAdministacion.modifiReglasProceso()}"   icon="ui-icon-disk"
+                                                                             update=":contenedorGeneral:Contenedor:growl_General,
+                                                                             :contenedorGeneral:Contenedor:RegArcAva:ArchiAvaluo,
+                                                                             :contenedorGeneral:Contenedor:RegArcAva:ArchiCliente,
+                                                                             :contenedorGeneral:Contenedor:RegArcAva:Condicion,
+                                                                             :contenedorGeneral:Contenedor:RegArcAva:PreCondic"
+                                                                             style="font-family: Arial;font-size: 13px;"/></center></td>
+                                </tr>
+                            </table>
+                        </center>
+                        <br/>
+                    </p:panel>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+

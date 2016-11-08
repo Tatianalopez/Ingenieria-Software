@@ -1,0 +1,234 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Producto Entidad</title>
+    </h:head>
+    <h:body> 
+        <h:form id="proenti">
+
+            <table border="0" cellspacing="2" cellpadding="2">
+                <tr>
+                    <td><big><big><b><p class="Title">Gestión de producto entidad</p></b></big></big></td>
+                </tr>
+                <tr>
+                    <td colspan="10"> <p:separator /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:panel style="border: none;">
+                            <b><p:outputLabel value="Seleccione la opción a ver y/o modificar " style="font-family:Arial;font-size: 13px;"/></b>
+                            <br/>
+                            <br/>
+                            <p:selectOneRadio id="Proentida" value="#{MBAdministacion.selectproent}" style="font-family:Arial;font-size: 12px;">
+                                <f:selectItem itemLabel="Gestión de producto entidad" itemValue="Producto_entidad" />
+                                <f:selectItem itemLabel="Gestión de tipo producto entidad" itemValue="Tipo_Producto_entidad" />
+                                <p:ajax event="change" listener="#{MBAdministacion.seleccionproent()}" 
+                                        update="
+                                        :contenedorGeneral:Contenedor:proenti:InfProent,
+                                        :contenedorGeneral:Contenedor:proenti:InfTiProent"/>
+                            </p:selectOneRadio>
+                        </p:panel>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+
+                        <p:outputPanel id="InfProent">
+                            <p:panel rendered="#{MBAdministacion.estadoProent}" style="border: none;">
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                            
+                                        <td>
+                                            <p:commandButton value="Crear nuevo producto entidad" icon="ui-icon-arrowthick-1-e" id="boton1" 
+                                                             update=":contenedorGeneral:Contenedor:proenti:DialogProdEnti" action="#{MBAdministacion.abrirInfodialogRegistro(4)}" style="font-family: Arial;font-size: 13px;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                             <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listProducEnt)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="ProEnt" value="#{MBAdministacion.listProducEnt}" selectionMode="single" rows="50" id="ProducEntTable" style="font-family: Arial;font-size: 12px;" 
+                                                         widgetVar="ProductoEntidad" selection="#{MBAdministacion.admProdEnt}" rowKey="#{ProEnt.codProEnt}">                          
+                                                <p:column headerText="Nombre" filterBy="#{ProEnt.nombreProEnt}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{ProEnt.nombreProEnt}" />
+                                                </p:column>
+                                                <p:column headerText="Descripción" filterBy="#{ProEnt.descripcion_ProEnt}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                                    <h:outputText value="#{ProEnt.descripcion_ProEnt}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                            <br/>
+                                            <center>
+                                                <p:commandButton style="font-family: Arial;font-size: 13px;" 
+                                                                 update=":contenedorGeneral:Contenedor:proenti:DialogProdEnti,
+                                                                 :contenedorGeneral:Contenedor:growl_General" value="Modificar"  icon="ui-icon-check" action="#{MBAdministacion.abrirInfodialog(4)}" />
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+                            </p:panel>
+
+                        </p:outputPanel>
+
+                        <p:outputPanel id="InfTiProent">
+                            <p:panel rendered="#{MBAdministacion.estadoTiproent}" style="border: none;">
+                                <table cellspacing="4" cellpadding="4">
+                                    <tr>                           
+                                        <td>
+                                            <p:commandButton value="Crear nuevo tipo de producto entidad" id="boton2"  action="#{MBAdministacion.abrirInfodialogRegistro(5)}"
+                                                             style="font-family: Arial;font-size: 13px;" update=":contenedorGeneral:Contenedor:proenti:DialogTipoProdEnti,
+                                                             :contenedorGeneral:Contenedor:growl_General" icon="ui-icon-arrowthick-1-e"  />            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                             <br/>
+                                            <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listTipProducEnt)}" style="font-family: Arial;font-size: 13px;" /></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:dataTable var="TipProEnt" value="#{MBAdministacion.listTipProducEnt}" selectionMode="single" rows="50" id="TipProEntTable" 
+                                             style="font-family: Arial;font-size: 12px;"  widgetVar="TipProEnt" 
+                                             selection="#{MBAdministacion.admTipProdEnt}" rowKey="#{TipProEnt.codTipProEnt}">
+
+                                    <p:column headerText="Nombre"  filterBy="#{TipProEnt.nombre_TipProEnt}" style="font-family:Arial;font-size: 12px;width: 150px;" >
+                                        <h:outputText value="#{TipProEnt.nombre_TipProEnt}" />
+                                    </p:column>
+                                    <p:column headerText="Descripción"  filterBy="#{TipProEnt.descripcion_TipProEnt}" style="font-family:Arial;font-size: 12px;width: 150px;">
+                                        <h:outputText value="#{TipProEnt.descripcion_TipProEnt}" />
+                                    </p:column>
+                                    <p:column headerText="Producto entidad" filterBy="#{TipProEnt.nombreProEnt}" style="font-family:Arial;font-size: 12px;width: 150px;" >
+                                        <h:outputText value="#{TipProEnt.nombreProEnt}" />
+                                    </p:column>                        
+                                </p:dataTable>
+                                <br/>
+                                <center>
+                                    <p:commandButton
+                                        update=":contenedorGeneral:Contenedor:proenti:DialogTipoProdEnti,
+                                        :contenedorGeneral:Contenedor:growl_General" id="boton3" value="Modificar" action="#{MBAdministacion.abrirInfodialog(5)}" 
+                                        style="font-family: Arial;font-size: 13px;"  icon="ui-icon-check"/>
+                                </center>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br/>
+
+                            </p:panel>
+                        </p:outputPanel>
+
+
+
+                        <!--dialogos producto entidad-->      
+                        <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogProdEnti">
+                            <p:dialog header="#{MBAdministacion.tituloDialogProdEnti}" widgetVar="DlgProducEnti" modal="false" height="auto" width="auto" showEffect="fade" hideEffect="fade">
+                                <br/>
+                                <center>
+                                    <table cellspacing="3" cellpadding="3"> 
+                                        <tr>
+                                            <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><h:outputText value="Nombre: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                            <td><p:inputText value="#{MBAdministacion.nombreTable}" pt:placeholder="Nombre" style="font-family: Arial;font-size: 12px;text-transform: uppercase;" onkeypress="return validarLetras(event)"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><h:outputText value="Descripción: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                            <td><p:inputTextarea value="#{MBAdministacion.desTable}" pt:placeholder="Descripción" style="font-family: Arial;font-size: 12px;width: 200px;text-transform: uppercase;" /></td>
+                                        </tr>
+                                    </table>                 
+                                    <br/>                       
+                                    <h:panelGrid columns="1" cellpadding="5" >
+
+                                        <c:choose>
+                                            <c:when test="#{MBAdministacion.tituloDialogProdEnti == 'Registrar nuevo producto entidad'}">
+                                                <p:commandButton  icon="ui-icon-disk" value="Guardar" id="boton5" action="#{MBAdministacion.registrarProEnt()}"
+                                                                  update=":contenedorGeneral:Contenedor:proenti:InfProent,                                            
+                                                                  :contenedorGeneral:Contenedor:growl_General" style="font-family: Arial;font-size: 13px;" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p:commandButton icon="ui-icon-check" id="boton4" action="#{MBAdministacion.modifiProEnt()}" value="Modificar"
+                                                                 update=":contenedorGeneral:Contenedor:proenti:InfProent,
+                                                                 :contenedorGeneral:Contenedor:growl_General"  style="font-family: Arial;font-size: 13px;"  />
+                                            </c:otherwise>
+                                        </c:choose>
+
+
+                                    </h:panelGrid>
+                                </center>
+
+                            </p:dialog>
+                        </p:outputPanel>
+
+                        <!--fin dialogos de producto entidad-->
+
+                        <p:outputPanel style="font-family: Arial;font-size: 12px;" id="DialogTipoProdEnti">
+                            <p:dialog header="#{MBAdministacion.tituloDialogTipProdEnt}" widgetVar="DlgTipProducEnti" modal="false" height="auto" width="500" showEffect="fade" hideEffect="fade">
+                                <br/>
+                                <center>
+                                    <table cellspacing="3" cellpadding="3">
+                                        <tr>
+                                            <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><h:outputText value="Producto entidad que pertenece: *" style="font-family: Arial;font-size: 12px;" /></td>
+                                            <td>  <p:selectOneMenu  id="cmbProdEntiiii" style="width: 213px;font-size: 14px;" effect="fold" value="#{MBAdministacion.codProEnt}">
+                                                    <f:selectItem itemValue="" itemLabel="--Seleccione--"/>
+                                                    <f:selectItems value="#{MBAdministacion.proEntAll}" />
+                                                </p:selectOneMenu> 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td> <h:outputText value="Nombre: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                            <td><p:inputText id="TipDocNomt" value="#{MBAdministacion.nombretipoProducto}" pt:placeholder="Nombre"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;" onkeypress="return validarLetras(event)"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td>   <h:outputText value="Descripción: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                            <td>   <p:inputTextarea id="TipDocDest" value="#{MBAdministacion.destipoproducto}" pt:placeholder="Descripción"   style="font-family: Arial;font-size: 12px;text-transform: uppercase;" /></td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <h:panelGrid columns="1" cellpadding="5" >
+                                        <c:choose>
+                                            <c:when test="#{MBAdministacion.tituloDialogTipProdEnt == 'Registrar nuevo tipo de producto entidad'}">
+                                                <p:commandButton  icon="ui-icon-disk" value="Guardar" action="#{MBAdministacion.regisTipProEnt()}" id="BTNt2" update="
+                                                                  :contenedorGeneral:Contenedor:proenti:InfTiProent,
+                                                                  :contenedorGeneral:Contenedor:growl_General"  style="font-family: Arial;font-size: 13px;" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p:commandButton icon="ui-icon-check" id="boton6" action="#{MBAdministacion.modifiTipProEnt()}" value="Modificar" 
+                                                                 update=":contenedorGeneral:Contenedor:proenti:InfTiProent,
+                                                                 :contenedorGeneral:Contenedor:growl_General"  style="font-family: Arial;font-size: 13px;"  />
+                                            </c:otherwise>
+                                        </c:choose>
+
+                                    </h:panelGrid>
+                                </center>
+
+                            </p:dialog>
+                        </p:outputPanel>
+                    </td>
+                </tr>
+            </table>
+
+
+
+            <br/>
+
+        </h:form>
+    </h:body>
+</html>

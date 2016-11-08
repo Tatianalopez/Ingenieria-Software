@@ -1,0 +1,155 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://java.sun.com/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+       xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Informacion de Cargos</title>
+    </h:head> 
+    <h:body>
+        <h:form id="FrmRol">
+            <br/>
+            <table  cellspacing="4" cellpadding="4">
+                <tr> 
+                    <td>
+                        <big><big><b><p class="Title">Gestión de roles</p></b></big></big>                                    
+                    </td>
+                    <td>
+                        <b><big><font face="Arial" color="gray"><p:outputLabel value="|" /></font></big></b>
+                    </td>
+                    <td>
+                        <p:commandButton value="Crear nuevo rol de acceso" update=":contenedorGeneral:Contenedor:FrmRol:dialogregistroroles" action="#{MBPermiso.opencreateroles()}"
+                                         style="font-family: Arial;font-size: 13px;" icon="ui-icon-arrowthick-1-e" />
+                    </td>
+                </tr>
+            </table>
+            <br/>
+
+            <p:outputPanel id="DatosRoles">
+                <table  cellspacing="4" cellpadding="4">
+                    <tr>
+                        <td colspan="10">
+                            <p:separator   />      
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>
+                             <b> <p:outputLabel value="Total de registros encontrados: #{fn:length(MBAdministacion.listRoles)}" style="font-family: Arial;font-size: 13px;" /></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:dataTable var="Rol" value="#{MBAdministacion.listRoles}" selectionMode="single"   rows="50" id="RolTable" style="font-family: Arial;font-size: 12px;"  
+                                         widgetVar="Roles" 
+                                         selection="#{MBAdministacion.admRoles}" rowKey="#{Rol.codRol}" emptyMessage="No se encontraron registros">
+
+                                <p:column headerText="Nombre" filterBy="#{Rol.nombre_Rol}" style="font-family:Arial;font-size: 12px;">
+                                    <h:outputText value="#{Rol.nombre_Rol}" />
+                                </p:column>
+                                <p:column headerText="Descripción" filterBy="#{Rol.descripcion_Rol}" style="font-family:Arial;font-size: 12px;" >
+                                    <h:outputText value="#{Rol.descripcion_Rol}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <center>
+                    <p:commandButton 
+                        style="font-family: Arial;font-size: 13px;" 
+                        value="Modificar" action="#{MBPermiso.validarDatatableRol()}" icon="ui-icon-check" update=":contenedorGeneral:Contenedor:growl_General,
+                        :contenedorGeneral:Contenedor:FrmRol:dialogregistroroles"/>
+                </center>
+                <br/>
+            </p:outputPanel>
+
+            <!-- DIALOG DE REGISTRO DE ROLES-->
+            <p:outputPanel style="font-family: Arial;font-size: 12px;" id="dialogregistroroles">
+                <p:dialog header="#{MBPermiso.tituloDialogRoles}" widgetVar="DlgRol" modal="false" height="auto" width="auto" showEffect="fade" hideEffect="fade" resizable="false">
+                    <br/>
+                    <center>                        
+                        <table cellspacing="3" cellpadding="3">
+                            <tr>
+                                <td> <b><h:outputLabel styleClass="Texto" style="color: red;" value="Campos obligatorios (*)" /></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="10"><p:separator style="font-family:Arial;font-size: 12px;" /></td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Nombre: *"  style="font-family: Arial;font-size: 12px;"  /></td>
+                                <td><p:inputText id="NomCar" value="#{MBPermiso.nombreRol}" pt:placeholder="Nombre"  style="font-family: Arial;font-size: 12px;text-transform: uppercase;" onkeypress="return validarLetrasyNumeros(event)" /></td>
+                            </tr>
+                            <tr>
+                                <td > <h:outputText value="Descripción: *"  style="font-family: Arial;font-size: 12px;" /></td>
+                                <td colspan="2"><p:inputTextarea id="DesCarg" value="#{MBPermiso.descripcionRol}" pt:placeholder="Descripción"  style="width: 250px;height: 50px;font-family: Arial;font-size: 12px;text-transform: uppercase;" /></td>
+                            </tr>
+
+                            <c:choose>
+                                <c:when test="#{MBPermiso.tituloDialogRoles == 'Registrar nuevo rol'}">
+                                    <tr>
+                                        <td><h:outputLabel for="ProcCar" value="Proceso por asignar:"  style="font-family: Arial;font-size: 12px;" /></td>
+                                        <td>
+                                            <p:selectCheckboxMenu id="ProcCar" value="#{MBPermiso.nombreProceso}"  style="font-family: Arial;font-size: 12px;" label="Seleccione una opción" panelStyle="width:250px;font-size:12px;" filterMatchMode="contains" filter="true" >
+                                                <f:selectItems value="#{MBPermiso.cargProcesos}" />
+                                                <p:ajax listener="#{MBPermiso.getcargaProEntAsignadoRoles(1)}"  update="display"/>
+                                            </p:selectCheckboxMenu>
+                                        </td>
+                                        <td>
+                                            <p:outputPanel id="display" style="width:250px;padding-left:5px;margin-top:10px;font-family: Arial;font-size: 12px;">
+                                                <p:dataList value="#{MBPermiso.cargaProducEntAsignadoRoles}" var="ProdEnt" emptyMessage="No ha seleccionado" style="font-family: Arial;font-size: 12px;">
+                                                    #{ProdEnt.label}
+                                                </p:dataList>
+                                            </p:outputPanel>
+                                        </td>
+                                    </tr>
+                                </c:when>
+                                <c:otherwise>
+                                    <tr>
+                                        <td><h:outputLabel for="ProcCar" value="Proceso por asignar:"  style="font-family: Arial;font-size: 12px;" /></td>
+                                        <td>
+                                            <p:selectCheckboxMenu id="ProcCar1" value="#{MBPermiso.nombreProceso1}" style="font-family: Arial;font-size: 12px;"  label="Seleccione una opción" panelStyle="width:250px;font-size:12px;" filterMatchMode="contains" filter="true" >
+                                                <f:selectItems value="#{MBPermiso.cargProcesos}" />
+                                                <p:ajax listener="#{MBPermiso.getcargaProEntAsignadoRoles(2)}"  update="display1"/>
+                                            </p:selectCheckboxMenu>
+
+                                        </td>
+                                        <td>
+                                            <p:outputPanel id="display1" style="width:250px;padding-left:5px;margin-top:10px;" autoUpdate="true">
+                                                <p:dataList value="#{MBPermiso.cargaProducEntAsignadoRoles1}" var="ProdEnt" emptyMessage="No ha seleccionado"  style="font-family: Arial;font-size: 12px;" >
+                                                    #{ProdEnt.label}
+                                                </p:dataList>
+                                            </p:outputPanel>
+                                        </td>
+                                    </tr>
+                                </c:otherwise>
+                            </c:choose>
+                        </table>
+
+                        <br/>
+
+                        <table >
+                            <tr>
+                                <c:choose>
+                                    <c:when test="#{MBPermiso.tituloDialogRoles == 'Registrar nuevo rol'}">
+                                        <td><p:commandButton  icon="ui-icon-check" value="Guardar" actionListener="#{MBPermiso.inserRoles()}"  style="font-family: Arial;font-size: 13px;"  id="BTN2" 
+                                                              update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:FrmRol:DatosRoles"/></td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><p:commandButton  icon="ui-icon-check" value="Actualizar" actionListener="#{MBPermiso.modifiRol()}"  style="font-family: Arial;font-size: 13px;" 
+                                                              id="BTN4" update=":contenedorGeneral:Contenedor:growl_General,:contenedorGeneral:Contenedor:FrmRol:DatosRoles"  /></td>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tr>
+                        </table>
+                        <br/>
+                    </center>
+
+                </p:dialog>
+            </p:outputPanel>
+
+           
+        </h:form>
+    </h:body>
+</html>
